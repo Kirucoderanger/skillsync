@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SkillSync – Smart Career & Learning Tracker</title>
+    <link rel="stylesheet" href="/styles/style.css" />
+    <script type="module" src="js/main.js"></script>
+  </head>
+  <body>
+    <header class="header"  id="header"></header>
+    <!-- Main Content -->
+  <main class="dashboard">
+    <!-- Left Sidebar: Skill Tracker -->
+    <aside class="sidebar">
+      <h2>Skill Tracker</h2>
+      <ul class="skill-status">
+        <li><input type="checkbox" /> HTML – Completed</li>
+        <li><input type="checkbox" /> CSS – In Progress</li>
+        <li><input type="checkbox" /> JavaScript – To Learn</li>
+      </ul>
+      <div id="app">
+    <h1>Welcome to SkillSync</h1>
+    <div id="skill-tracker"></div>
+    <div id="resume-analyzer"></div>
+    </div>
+      <div class="progress-chart">
+        <h3>Progress Summary</h3>
+        <canvas id="progressChart"></canvas>
+      </div>
+    </aside>
+
+    <!-- Main Widgets -->
+    <section class="widgets">
+      <!-- Trending Jobs & Skills -->
+      <div class="card">
+        <h2>Trending Jobs & Skills</h2>
+        <div class="card-list">
+          <div class="card-item">Frontend Developer</div>
+          <div class="card-item">React.js</div>
+          <div class="card-item">UI/UX Design</div>
+        </div>
+      </div>
+
+      <!-- Career Score Panel -->
+      <div class="card">
+        <h2>Career Readiness Score</h2>
+        <p>Your current score: <strong>72/100</strong></p>
+        <button class="upload-btn">Upload Resume</button>
+      </div>
+
+      <!-- Learning Path -->
+      <div class="card">
+        <h2>Learning Path</h2>
+        <div class="learning-cards">
+          <div class="learning-card">
+            <p>React for Beginners</p>
+            <progress value="40" max="100"></progress>
+            <button>Continue</button>
+          </div>
+          <div class="learning-card">
+            <p>Advanced CSS</p>
+            <progress value="75" max="100"></progress>
+            <button>Track</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Chatbot Floating Button -->
+  <button class="chatbot-button" id="chatbot-button">💬</button>
+    
+    
+    
+    
+    <footer id="footer"></footer>
+  </body>
+</html>
+
+
+
+
