@@ -1,0 +1,1 @@
+export function greetUser() { console.log('Welcome to SkillSync (Vite)!'); }
