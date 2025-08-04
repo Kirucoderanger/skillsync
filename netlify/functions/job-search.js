@@ -7,8 +7,8 @@ exports.handler = async (event) => {
   const country = 'us';
 
   const params = new URLSearchParams({
-    app_id: process.env.ADZUNA_APP_ID,
-    app_key: process.env.ADZUNA_APP_KEY,
+    app_id: process.env.VITE_ADZUNA_APP_ID,
+    app_key: process.env.VITE_ADZUNA_APP_KEY,
     results_per_page: 10,
     what: query,
     content_type: 'application/json'
@@ -41,9 +41,33 @@ exports.handler = async (event) => {
   }
 };
 
+/*
+// netlify/functions/job-search.js
+export async function handler(event, context) {
+  const query = event.queryStringParameters.query || 'frontend';
+  const remote = event.queryStringParameters.remote || '';
 
+  const app_id = process.env.VITE_ADZUNA_APP_ID;
+  const app_key = process.env.VITE_ADZUNA_APP_KEY;
 
+  const url = `https://api.adzuna.com/v1/api/jobs/us/search/1?app_id=${app_id}&app_key=${app_key}&results_per_page=10&what=${query}&content_type=application/json`;
 
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+    return {
+      statusCode: 200,
+      body: JSON.stringify(data),
+    };
+  } catch (err) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: err.message }),
+    };
+  }
+}
+
+*/
 
 
 
