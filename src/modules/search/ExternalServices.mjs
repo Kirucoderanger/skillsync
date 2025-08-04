@@ -86,7 +86,7 @@ exports.handler = async function(event, context) {
 };*/
 
 
-import { fetchCourses } from './api/course-api.mjs';
+//import { fetchCourses } from './api/course-api.mjs';
 
 export async function searchJobs(jobTitle, remoteOnly = false) {
   const url = `/api/job-search?query=${encodeURIComponent(jobTitle)}&remote=${remoteOnly}`;
