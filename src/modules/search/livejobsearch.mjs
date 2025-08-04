@@ -211,7 +211,7 @@ async function fetchJobSkills(jobTitle) {
 
 
 //import { searchJobs } from './api/jobSearch.js';
-import searchJobs from "./ExternalServices.mjs";
+/*import searchJobs from "./ExternalServices.mjs";
 
 async function fetchJobSkills(jobTitle, remoteOnly = false) {
   trendingJobs.innerHTML = `<div class="text-center text-gray-500">Loading trending jobs...</div>`;
@@ -225,12 +225,12 @@ async function fetchJobSkills(jobTitle, remoteOnly = false) {
   } catch (err) {
     trendingJobs.innerHTML = `<div class="text-red-600 text-sm">Error: ${err.message}</div>`;
   }
-}
+}*/
 
 
 
 
-/*async function fetchJobSkills(jobTitle, remoteOnly = false) {
+async function fetchJobSkills(jobTitle, remoteOnly = false) {
   trendingJobs.innerHTML = `<div class="col-span-2 text-center text-gray-500">Loading trending jobs...</div>`;
   try {
     const url = `/api/job-search?query=${encodeURIComponent(jobTitle)}&remote=${remoteOnly}`;
@@ -243,7 +243,7 @@ async function fetchJobSkills(jobTitle, remoteOnly = false) {
   } catch (err) {
     trendingJobs.innerHTML = `<div class="text-red-600 text-sm">Error fetching jobs. ${err.message}</div>`;
   }
-}*/
+}
 
 
 // Fetch course recommendations via Netlify function or Udemy API

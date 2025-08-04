@@ -42,6 +42,8 @@ exports.handler = async (event) => {
   }
 };
 
+
+
 /*
 // netlify/functions/job-search.js
 export async function handler(event, context) {
