@@ -229,6 +229,7 @@ async function fetchJobSkills(jobTitle, remoteOnly = false) {
 
 
 
+
 /*async function fetchJobSkills(jobTitle, remoteOnly = false) {
   trendingJobs.innerHTML = `<div class="col-span-2 text-center text-gray-500">Loading trending jobs...</div>`;
   try {

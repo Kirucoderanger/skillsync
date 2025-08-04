@@ -86,6 +86,15 @@ exports.handler = async function(event, context) {
 };*/
 
 
+import { fetchCourses } from './api/course-api.mjs';
+
+export async function searchJobs(jobTitle, remoteOnly = false) {
+  const url = `/api/job-search?query=${encodeURIComponent(jobTitle)}&remote=${remoteOnly}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error("Failed to fetch jobs");
+  return await res.json();
+}
+/*
 export default async function searchJobs(query, location = 'remote', country = 'us') {
   const appId = import.meta.env.VITE_ADZUNA_APP_ID;
   const appKey = import.meta.env.VITE_ADZUNA_APP_KEY;
@@ -115,7 +124,7 @@ export default async function searchJobs(query, location = 'remote', country = '
     url: job.redirect_url
   }));
 }
-
+*/
 
 
 /*
