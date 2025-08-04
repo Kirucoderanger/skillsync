@@ -18,7 +18,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve(__dirname, "src/index.html"),
-        search: resolve(__dirname, "src/search/livejobsearch.html"),
+        search: resolve(__dirname, "src/modules/search/livejobsearch.html"),
         //cart: resolve(__dirname, "src/cart/index.html"),
         //checkout: resolve(__dirname, "src/checkout/index.html"),
         //product: resolve(__dirname, "src/product_pages/index.html"),
