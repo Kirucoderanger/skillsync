@@ -88,7 +88,7 @@ exports.handler = async function(event, context) {
 
 //import { fetchCourses } from './api/course-api.mjs';
 
-export async function searchJobs(jobTitle, remoteOnly = false) {
+export default async function searchJobs(jobTitle, remoteOnly = false) {
   const url = `/api/job-search?query=${encodeURIComponent(jobTitle)}&remote=${remoteOnly}`;
   const res = await fetch(url);
   if (!res.ok) throw new Error("Failed to fetch jobs");
