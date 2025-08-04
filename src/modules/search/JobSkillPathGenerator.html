@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SkillSync – Job Search & Learning Path</title>
+  <script type="module" src="./JobSkillPathGenerator.mjs" defer></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 text-gray-800">
+  <!-- Header -->
+  <header class="bg-white shadow p-4 flex justify-between items-center">
+    <h1 class="text-xl font-bold text-blue-600">SkillSync</h1>
+    <input id="job-input" type="text" placeholder="Search job title..." class="border rounded px-4 py-2 w-1/2" />
+    <button id="search-btn" class="bg-blue-600 text-white px-4 py-2 rounded ml-2">Search</button>
+  </header>
+
+  <!-- Main Section -->
+  <main class="p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Trending Skills -->
+    <section class="col-span-2 bg-white p-4 rounded shadow">
+      <h2 class="text-lg font-semibold mb-4">Trending Skills</h2>
+      <div id="skills-container" class="flex flex-wrap gap-2"></div>
+    </section>
+
+    <!-- Learning Path Generator -->
+    <section class="bg-white p-4 rounded shadow">
+      <h2 class="text-lg font-semibold mb-4">Learning Path</h2>
+
+      <label class="block mb-2 font-medium">Career Goal</label>
+      <select id="career-goal" class="w-full border px-3 py-2 rounded mb-4">
+        <option value="Frontend Developer">Frontend Developer</option>
+        <option value="Backend Developer">Backend Developer</option>
+        <option value="Data Scientist">Data Scientist</option>
+      </select>
+
+      <label class="block mb-2 font-medium">Your Existing Skills</label>
+      <textarea id="user-skills" rows="3" placeholder="e.g., HTML, CSS, Git" class="w-full border px-3 py-2 rounded mb-4"></textarea>
+
+      <button id="generate-path" class="bg-green-600 text-white px-4 py-2 rounded w-full">Generate Path</button>
+
+      <div id="course-suggestions" class="mt-4"></div>
+      <div id="user-skill-tracker" class="mt-4"></div>
+      
+    </section>
+  </main>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SyncSkill – Smart Career & Learning Tracker</title>
+    <link rel="icon" href="/favicon.ico" />
+      <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+  </head>
+  <body class="bg-gray-100 text-gray-800 font-sans">
+    <!-- Header -->
+    <header class="bg-white shadow-md fixed top-0 w-full z-50">
+      <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        <div class="text-xl font-bold text-blue-600">SyncSkill</div>
+        <nav class="space-x-4 hidden md:flex">
+          <a href="#" class="hover:text-blue-500">Dashboard</a>
+          <a href="#" class="hover:text-blue-500">Skill Tracker</a>
+          <a href="#" class="hover:text-blue-500">Courses</a>
+          <a href="#" class="hover:text-blue-500">Score</a>
+          <a href="#" class="hover:text-blue-500">Chatbot</a>
+        </nav>
+        <button class="md:hidden block" id="hamburger">
+          <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main content -->
+    <main class="pt-24 px-6 max-w-7xl mx-auto grid md:grid-cols-4 gap-6">
+      <!-- Left Sidebar (Skill Tracker) -->
+      <aside class="md:col-span-1 space-y-4">
+        <div class="bg-white p-4 rounded-lg shadow">
+          <h2 class="text-lg font-semibold mb-2">Skill Tracker</h2>
+          <ul id="skill-tracker" class="space-y-2 text-sm">
+            <!-- Dynamic skills here -->
+          </ul>
+        </div>
+        <div class="bg-white p-4 rounded-lg shadow">
+          <h2 class="text-lg font-semibold mb-2">Progress</h2>
+          <div id="progress-ring" class="h-32 flex items-center justify-center">
+            <!-- Radial progress chart -->
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Dashboard Area -->
+      <section class="md:col-span-3 space-y-6">
+        <!-- Search -->
+        <div class="bg-white p-4 rounded-lg shadow flex items-center gap-4">
+          <input type="text" id="job-title-input" placeholder="Search job title (e.g. Frontend Developer)"
+            class="w-full p-2 border rounded-md" />
+          <button id="job-search-btn" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+            Search
+          </button>
+        </div>
+        <div class="flex items-center gap-3 mt-4">
+  <label class="inline-flex items-center cursor-pointer">
+    <input type="checkbox" id="remote-toggle" class="sr-only peer">
+    <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-400 rounded-full peer peer-checked:bg-blue-500 relative transition">
+      <span class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition peer-checked:translate-x-5"></span>
+    </div>
+    <span class="ml-2 text-sm text-gray-700">Remote only</span>
+  </label>
+</div>
+
+        <!-- Trending Skills Widget -->
+        <div class="bg-white p-4 rounded-lg shadow">
+          <h2 class="text-lg font-semibold mb-3">Trending Jobs & Skills</h2>
+          <div id="trending-jobs" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Cards will be populated here -->
+          </div>
+        </div>
+
+        <!-- Course Suggestions -->
+        <div class="bg-white p-4 rounded-lg shadow">
+          <h2 class="text-lg font-semibold mb-3">Suggested Courses</h2>
+          <div id="course-suggestions" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Dynamic course cards -->
+          </div>
+        </div>
+
+        <!-- Scorecard -->
+        <div class="bg-white p-4 rounded-lg shadow">
+          <h2 class="text-lg font-semibold mb-3">Career Readiness Score</h2>
+          <input type="file" id="resume-upload" class="block mb-3 text-sm" />
+          <button id="evaluate-btn"
+            class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700">Evaluate Resume</button>
+          <div id="score-result" class="mt-4 text-sm text-gray-700">
+            <!-- Score results here -->
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Chatbot Button -->
+    <button id="chatbot-btn"
+      class="fixed bottom-6 right-6 bg-purple-600 text-white p-4 rounded-full shadow-lg hover:bg-purple-700">
+      💬
+    </button>
+
+    <!-- Chatbot Modal -->
+    <div id="chatbot-modal"
+      class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div class="bg-white w-full max-w-md p-4 rounded-lg shadow-lg">
+        <h3 class="text-lg font-bold mb-2">Career Advice Bot</h3>
+        <div id="chat-log" class="h-60 overflow-y-auto border p-2 rounded mb-3 text-sm"></div>
+        <input type="text" id="chat-input" placeholder="Ask me anything..."
+          class="w-full p-2 border rounded mb-2 text-sm" />
+        <button id="chat-send-btn"
+          class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 w-full">Send</button>
+      </div>
+    </div>
+
+    <script type="module" src="livejobsearch.mjs"></script>
+  </body>
+</html>

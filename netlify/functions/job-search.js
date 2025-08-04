@@ -1,5 +1,53 @@
 const fetch = require('node-fetch');
 
+
+exports.handler = async (event) => {
+  const query = event.queryStringParameters.query || '';
+  const isRemote = event.queryStringParameters.remote === 'true';
+  const country = 'us';
+
+  const params = new URLSearchParams({
+    app_id: process.env.ADZUNA_APP_ID,
+    app_key: process.env.ADZUNA_APP_KEY,
+    results_per_page: 10,
+    what: query,
+    content_type: 'application/json'
+  });
+
+  if (isRemote) {
+    params.append('where', 'remote'); // Adzuna accepts "remote" as location
+  }
+
+  const url = `https://api.adzuna.com/v1/api/jobs/${country}/search/1?${params.toString()}`;
+
+  try {
+    const resp = await fetch(url);
+    const data = await resp.json();
+    const jobs = data.results.map(job => ({
+      title: job.title,
+      company: job.company.display_name,
+      location: job.location.display_name,
+      url: job.redirect_url
+    }));
+    return {
+      statusCode: 200,
+      body: JSON.stringify(jobs)
+    };
+  } catch (error) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: 'Failed to fetch jobs' })
+    };
+  }
+};
+
+
+
+
+
+
+
+/*
 exports.handler = async function (event) {
   const { query } = event.queryStringParameters;
   const appId = process.env.ADZUNA_APP_ID;
@@ -21,7 +69,7 @@ exports.handler = async function (event) {
     };
   }
 };
-
+*/
 
 // Netlify Function: job-search.js
 // Fetches trending jobs and required skills from Adzuna API
