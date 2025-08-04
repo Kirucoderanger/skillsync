@@ -19,6 +19,7 @@ exports.handler = async (event) => {
   }
 
   const url = `https://api.adzuna.com/v1/api/jobs/${country}/search/1?${params.toString()}`;
+  console.log(url)
 
   try {
     const resp = await fetch(url);
