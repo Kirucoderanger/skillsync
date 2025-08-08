@@ -187,7 +187,7 @@ export async function handler(event) {
 const options = {
 	method: 'POST',
 	headers: {
-		'x-rapidapi-key': '7b3612302dmsh94c63a722979e2cp18c462jsn761715a74097',
+		'x-rapidapi-key': false positive,
 		'x-rapidapi-host': 'udemy-api2.p.rapidapi.com',
 		'Content-Type': 'application/json'
 	},
@@ -279,7 +279,7 @@ const options = {
         const options = {
         method: 'POST',
         headers: {
-            'x-rapidapi-key': '7b3612302dmsh94c63a722979e2cp18c462jsn761715a74097',
+            'x-rapidapi-key': 'false positive',
             'x-rapidapi-host': 'udemy-api2.p.rapidapi.com',
             'Content-Type': 'application/json'
         },
@@ -323,7 +323,7 @@ const options = {
 /*url --request GET \
 	--url https://udemy-course-scrapper-api.p.rapidapi.com/course-names/course-instructor/course-url \
 	--header 'x-rapidapi-host: udemy-course-scrapper-api.p.rapidapi.com' \
-	--header 'x-rapidapi-key: 7b3612302dmsh94c63a722979e2cp18c462jsn761715a74097'
+	--header 'x-rapidapi-key: false [ositive'
 */
 /*
 export async function handler(event) {
@@ -341,7 +341,7 @@ export async function handler(event) {
     method: 'GET',
     headers: {
       'X-RapidAPI-Key': process.env.RAPIDAPI_KEY,
-      //'x-rapidapi-key': '7b3612302dmsh94c63a722979e2cp18c462jsn761715a74097',
+      //'x-rapidapi-key': 'false',
       //'x-rapidapi-host': 'udemy-course-scrapper-api.p.rapidapi.com'
       'X-RapidAPI-Host': 'udemy-search-free.p.rapidapi.com'
       
@@ -389,7 +389,7 @@ xhr.addEventListener('readystatechange', function () {
 });
 
 xhr.open('GET', 'https://golf-course-finder.p.rapidapi.com/api/golf-clubs/?miles=10&latitude=36.56910381018662&longitude=-121.95035631683683');
-xhr.setRequestHeader('x-rapidapi-key', '7b3612302dmsh94c63a722979e2cp18c462jsn761715a74097');
+xhr.setRequestHeader('x-rapidapi-key', 'false
 xhr.setRequestHeader('x-rapidapi-host', 'golf-course-finder.p.rapidapi.com');
 
 xhr.send(data);*/
