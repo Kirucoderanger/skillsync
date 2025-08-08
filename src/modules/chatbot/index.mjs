@@ -56,13 +56,13 @@ function appendMessage(sender, text) {
   msg.scrollIntoView();
 }
 
-//const openAiKey = process.env.VITE_OPENAI_API_KEY;
+const openAiKey = process.env.VITE_OPENAI_API_KEY;
 
 async function getBotReply1(message) {
   const response = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
     headers: {
-      "Authorization": "Bearer openAi_key",
+      "Authorization": `Bearer ${openAiKey}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
