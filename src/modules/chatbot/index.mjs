@@ -62,7 +62,7 @@ async function getBotReply1(message) {
   const response = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
     headers: {
-      "Authorization": "Bearer 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",
+      "Authorization": "Bearer openAi_key",
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
