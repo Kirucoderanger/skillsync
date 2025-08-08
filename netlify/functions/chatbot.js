@@ -2,13 +2,14 @@
 export async function handler(event) {
     const params = event.queryStringParameters;
     const message = params.message;
+    const cohereAPI_KEY = process.env.VITE_COHERE_KEY;
 
 
 const response = await fetch("https://api.cohere.com/v2/chat", {
   method: "POST",
   headers: {
     "accept": "application/json",
-    "Authorization": "Bearer sm88JGGoo671a3ArJa9SFelnxW0V0fKcoQlJAwZ4",
+    "Authorization": `Bearer ${cohereAPI_KEY}`,
     "Content-Type": "application/json"
     
   },

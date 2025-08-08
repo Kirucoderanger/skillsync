@@ -3,13 +3,14 @@ export async function handler(event) {
     const title = params.title;
     const message = `List the top 10 in-demand skills for a ${title}. 
         Respond with only a JSON oject of the skill names with the key skills, no explanation or extra text.`;
+        const cohereAPI_KEY = process.env.VITE_COHERE_KEY;
 
 
 const response = await fetch("https://api.cohere.com/v2/chat", {
   method: "POST",
   headers: {
     "accept": "application/json",
-    "Authorization": "Bearer sm88JGGoo671a3ArJa9SFelnxW0V0fKcoQlJAwZ4",
+    "Authorization": `Bearer ${cohereAPI_KEY}`,
     "Content-Type": "application/json"
     
   },
