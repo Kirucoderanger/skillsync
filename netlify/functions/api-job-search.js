@@ -1,5 +1,5 @@
 
-const baseURL = import.meta.env.VITE_SERVER_URL_GET || import.meta.env.VITE_SERVER_URL;
+//const baseURL = import.meta.env.VITE_SERVER_URL_GET || import.meta.env.VITE_SERVER_URL;
 
 const fetch = require("node-fetch");
 /*

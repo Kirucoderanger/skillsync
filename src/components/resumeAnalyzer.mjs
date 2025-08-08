@@ -15,3 +15,4 @@ export function renderResumeAnalyzer(containerId) {
     document.getElementById("analysis-result").innerText =`Score: ${result.score}\nFeedback: ${result.feedback}`;
   };
 }
+

@@ -18,7 +18,7 @@ export async function loadTemplate(url) {
 
 
 
-export default async function loadHeaderFooter(headerSelector, footerSelector) {
+ async function loadHeaderFooter(headerSelector, footerSelector) {
   const headerTemplate = await loadTemplate("/partials/header.html");
   const footerTemplate = await loadTemplate("/partials/footer.html");
   const headerElement = document.querySelector("#header");
@@ -37,3 +37,7 @@ export default async function loadHeaderFooter(headerSelector, footerSelector) {
   return (headerElement && footerElement); 
 
 }
+
+
+
+ export default  loadHeaderFooter 

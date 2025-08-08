@@ -57,6 +57,22 @@
             Search
           </button>
         </div>
+        <div>
+        <select id="category-dropdown" class="p-2 border rounded-md">
+              <option>All Categories</option> <!-- default empty -->
+            </select>
+            <select id="date-created" class="p-2 border rounded-md">
+              <option value="180">Date Created</option>
+              <option value="7">Week</option> <!-- default empty -->
+              <option value="15">2 week</option>
+              <option value="21">3 week</option>
+              <option value="30">Month</option>
+              <option value="360">More than a Month</option>
+            </select>
+            <select id="country-dropdown" class="p-2 border rounded-md">
+              <option value="us">Select Country</option> <!-- default empty -->
+            </select>
+          </div>
         <div class="flex items-center gap-3 mt-4">
   <label class="inline-flex items-center cursor-pointer">
     <input type="checkbox" id="remote-toggle" class="sr-only peer">
@@ -69,7 +85,7 @@
 
         <!-- Trending Skills Widget -->
         <div class="bg-white p-4 rounded-lg shadow">
-          <h2 class="text-lg font-semibold mb-3">Trending Jobs & Skills</h2>
+          <h2 class="text-lg font-semibold mb-3">Trending Jobs & Skills<br>(click the card to see demand skills)</h2>
           <div id="trending-jobs" class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <!-- Cards will be populated here -->
           </div>
@@ -96,13 +112,13 @@
       </section>
     </main>
 
-    <!-- Chatbot Button -->
+    <!-- Chatbot Button
     <button id="chatbot-btn"
       class="fixed bottom-6 right-6 bg-purple-600 text-white p-4 rounded-full shadow-lg hover:bg-purple-700">
       💬
-    </button>
+    </button> -->
 
-    <!-- Chatbot Modal -->
+    <!-- Chatbot Modal 
     <div id="chatbot-modal"
       class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div class="bg-white w-full max-w-md p-4 rounded-lg shadow-lg">
@@ -113,8 +129,29 @@
         <button id="chat-send-btn"
           class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 w-full">Send</button>
       </div>
-    </div>
+    </div>-->
 
-    <script type="module" src="livejobsearch.mjs"></script>
+
+    <div id="containerId" ></div>
+    
+    <!-- Toggle Button -->
+<button id="openchatbot" class="fixed bottom-6 right-6 bg-blue-600 text-white px-4 py-2 rounded-full z-50">
+  💬 Career Bot
+</button>
+
+<!-- Chatbot Panel -->
+<div id="chatbotpanel" class="hidden fixed bottom-20 right-6 w-80 h-96 bg-white border border-gray-300 shadow-xl rounded-md flex flex-col z-50">
+  <div class="flex justify-between items-center p-3 bg-blue-600 text-white rounded-t-md">
+    <span>Career Assistant</span>
+    <button id="closechatbot">✖</button>
+  </div>
+  <div id="chat-messages" class="flex-1 p-3 overflow-y-auto text-sm"></div>
+  <form id="chat-form" class="flex p-3 border-t">
+    <input type="text" id="chat-input" class="flex-1 border border-gray-300 rounded px-2" placeholder="Ask me anything about your career..." />
+    <button type="submit" class="ml-2 text-blue-600">Send</button>
+  </form>
+</div>
+
+    <script type="module" src="livejobsearch.mjs" defer></script>
   </body>
 </html>

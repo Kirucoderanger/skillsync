@@ -24,3 +24,7 @@ generalcode.py
 *.sln
 *.sw?
 .env
+
+# Local Netlify folder
+.netlify
+nodeopenai.js

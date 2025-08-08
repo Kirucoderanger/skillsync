@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1,
+    "title": "Responsive Web Design",
+    "provider": "freeCodeCamp",
+    "level": "Beginner",
+    "link": "https://www.freecodecamp.org/learn/responsive-web-design/"
+  },
+  {
+    "id": 2,
+    "title": "Frontend Developer Career Path",
+    "provider": "Scrimba",
+    "level": "Intermediate",
+    "link": "https://scrimba.com/learn/frontend"
+  }
+]

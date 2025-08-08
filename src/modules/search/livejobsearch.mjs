@@ -135,6 +135,8 @@ async function mockFetchCourses(topic) {
   );
 }*/
 
+import { handler } from "../../../netlify/functions/job-search";
+
 
 
 
@@ -143,8 +145,8 @@ async function mockFetchCourses(topic) {
 
 
 // DOM Elements
-const jobInput = document.getElementById('job-title-input');
-const searchBtn = document.getElementById('job-search-btn');
+//const jobInput = document.getElementById('job-title-input');
+//const searchBtn = document.getElementById('job-search-btn1');
 const trendingJobs = document.getElementById('trending-jobs');
 const courseSuggestions = document.getElementById('course-suggestions');
 const chatbotBtn = document.getElementById('chatbot-btn');
@@ -152,6 +154,9 @@ const chatbotModal = document.getElementById('chatbot-modal');
 const chatSendBtn = document.getElementById('chat-send-btn');
 const chatInput = document.getElementById('chat-input');
 const chatLog = document.getElementById('chat-log');
+const categoryDropdown = document.getElementById('category-dropdown');
+const countryDropdown = document.getElementById('country-dropdown');
+
 
 // Local cache
 let trendingSkillCache = JSON.parse(localStorage.getItem('trendingSkills') || '{}');
@@ -167,19 +172,19 @@ let courseCache = JSON.parse(localStorage.getItem('courseSuggestions') || '{}');
 
 const remoteToggle = document.getElementById('remote-toggle');
 
-searchBtn.addEventListener('click', async () => {
+/*searchBtn.addEventListener('click', async () => {
   const title = jobInput.value.trim();
   const remote = remoteToggle.checked;
   if (!title) return;
   await fetchJobSkills(title, remote);
   await fetchCourses(title);
-});
+});*/
 
 
 
 
 
-chatbotBtn.addEventListener('click', () => {
+/*chatbotBtn.addEventListener('click', () => {
   chatbotModal.classList.remove('hidden');
 });
 chatbotModal.addEventListener('click', e => {
@@ -191,7 +196,7 @@ chatSendBtn.addEventListener('click', async () => {
   chatLog.innerHTML += `<div class="mb-2"><strong>You:</strong> ${msg}</div>`;
   chatInput.value = '';
   await sendChatbotQuery(msg);
-});
+});*/
 
 // Fetch job skills via Netlify function
 /*
@@ -229,7 +234,7 @@ async function fetchJobSkills(jobTitle, remoteOnly = false) {
 
 
 
-
+/*
 async function fetchJobSkills(jobTitle, remoteOnly = false) {
   trendingJobs.innerHTML = `<div class="col-span-2 text-center text-gray-500">Loading trending jobs...</div>`;
   try {
@@ -243,16 +248,90 @@ async function fetchJobSkills(jobTitle, remoteOnly = false) {
   } catch (err) {
     trendingJobs.innerHTML = `<div class="text-red-600 text-sm">Error fetching jobs. ${err.message}</div>`;
   }
+}*/
+function convertToJson(res) {
+  const jsonResponse = res.json();
+  if (res.ok) {
+    return jsonResponse;
+  } else {
+    //throw new Error("Bad Response");
+    throw { name: "servicesError", message: jsonResponse };
+  }
 }
+
+import fetchCourses from "../courseEngine/courseSuggest.mjs";
+document.querySelector('#job-search-btn').addEventListener('click', async () => {
+  const jobTitle = document.querySelector('#job-title-input').value.trim();
+  const categoryDropdownValue = document.getElementById('category-dropdown').value.trim();
+  const countryDropdownValue = document.getElementById('country-dropdown').value.trim();
+  const dateCreated = document.getElementById('date-created').value.trim();
+  const remoteOnly = document.querySelector('#remote-toggle').checked;
+
+  try {
+    let handler = `/.netlify/functions/job-search?title=${encodeURIComponent(jobTitle)}&category=${encodeURIComponent(categoryDropdownValue)}&date=${encodeURIComponent(dateCreated)}&country=${encodeURIComponent(countryDropdownValue)}`;
+    const data = await fetch(handler);
+    
+    if (!data.ok) throw new Error('Failed to fetch jobs');
+     const jobs = await data.json();
+     console.log('Fetched jobs:', jobs);
+     renderTrendingJobs(jobs.results);
+     //let courses = fetchCourses(jobTitle);
+     const courses = await fetchCourses(jobTitle);
+    
+     console.log("from livejob",courses);
+     fetchCourse(jobTitle, courses);
+     //renderCourses(courses);
+
+    // Render jobs to DOM here
+  } catch (error) {
+    console.error(error.message);
+  }
+});
+
+const countries = [
+    {"Name":"United Kingdom","Code":"gb"},{"Name":"United States","Code":"us"},{"Name":"Austria","Code":"at"},
+    {"Name":"Australia","Code":"au"},{"Name":"Belgium","Code":"be"},{"Name":"Brazil","Code":"br"},{"Name":"Canada","Code":"ca"},
+    {"Name":"Switzerland","Code":"ch"},{"Name":"Germany","Code":"de"},{"Name":"Spain","Code":"es"},{"Name":"France","Code":"fr"},
+    {"Name":"India","Code":"in"},{"Name":"Italy","Code":"it"},{"Name":"Mexico","Code":"mx"},{"Name":"Netherlands","Code":"nl"},{"Name":"New Zealand","Code":"nz"},
+    {"Name":"Poland","Code":"pl"},{"Name":"Singapore","Code":"sg"},{"Name":"South Africa","Code":"za"}
+]
+
+//category dropdown from the api
+document.addEventListener('DOMContentLoaded', async () => {
+  try {
+    const response = await fetch('/.netlify/functions/fetchCategory'); 
+    const data = await response.json();
+    console.log(data);
+    data.results.forEach(cat => {
+      const option = document.createElement('option');
+      option.value = cat.tag;
+      option.textContent = cat.label;
+      categoryDropdown.appendChild(option);
+    });
+
+    countries.forEach(country => {
+      const option = document.createElement('option');
+      option.value = country.Code;
+      option.textContent = country.Name;
+      countryDropdown.appendChild(option);
+    });
+
+  } catch (err) {
+    console.error('Failed to load categories:', err);
+  }
+});
+
 
 
 // Fetch course recommendations via Netlify function or Udemy API
-async function fetchCourses(jobTitle) {
+async function fetchCourse(jobTitle, courses) {
   courseSuggestions.innerHTML = `<div class="text-center text-gray-500">Loading courses...</div>`;
   try {
-    const resp = await fetch(`/api/courses?query=${encodeURIComponent(jobTitle)}`);
-    if (!resp.ok) throw new Error('Failed to fetch courses');
-    const courses = await resp.json();
+    //const resp = await fetch(`/api/courses?query=${encodeURIComponent(jobTitle)}`);
+    //if (!resp.ok) throw new Error('Failed to fetch courses');
+    
+    //const courses = await resp.json();
+    //const course = courses.json();
     courseCache[jobTitle] = courses;
     localStorage.setItem('courseSuggestions', JSON.stringify(courseCache));
     renderCourses(courses);
@@ -287,30 +366,140 @@ function renderTrendingJobs(jobs) {
     trendingJobs.innerHTML = `<div class="text-gray-500">No jobs found.</div>`;
     return;
   }
+
+  const targetId = countryDropdown.value;
+  const foundObject = countries.find(item => item.Code === targetId);
+  const adjacentName = foundObject.Name;
+
+  trendingJobs.innerHTML = jobs.map((job, index) => `
+    <div class="bg-blue-50 p-3 rounded shadow hover:bg-blue-100 transition cursor-pointer job-card" 
+         data-title="${job.title}" 
+         data-category="${job.category?.label || 'General'}"
+         data-index="${index}">
+      <h3 class="text-md font-semibold">${job.title}</h3>
+      <p class="text-sm text-gray-600">${job.company?.display_name || 'Unknown Company'} — ${job.location?.display_name || 'Unknown Location'}</p>
+      <p><strong>Category:</strong> ${job.category?.label || "N/A"}</p>
+      <p><strong>Salary:</strong> £${job.salary_min?.toLocaleString()} - £${job.salary_max?.toLocaleString()}</p>
+      <p><strong>Contract:</strong> ${job.contract_type || "permanent/temporary"} (${job.contract_time || "full_time/part_time"})</p>
+      <p><strong>created:</strong> ${job.created}</p>
+      <p><strong>${adjacentName}</strong> <a href="${job.redirect_url}" target="_blank" class="text-blue-500 text-sm underline">View Job</a></p>
+    </div>
+  `).join('');
+
+  // Attach click events to each job card
+  document.querySelectorAll(".job-card").forEach(card => {
+    card.addEventListener("click", async () => {
+      
+      const roleTitle = card.dataset.title;
+      console.log(roleTitle);
+      const category = card.dataset.category;
+      const skillTracker = document.getElementById("skill-tracker");
+
+      // Clear previous skills
+      skillTracker.innerHTML = `<p class="text-gray-400 text-sm italic">Loading skills for "${roleTitle}"...</p>`;
+
+      try {
+        const res = await fetch(`/.netlify/functions/extract-skill?title=${encodeURIComponent(roleTitle)}`);
+        const data  = await res.json();
+        
+        console.log("skills", data);
+        //data.results.forEach(cat => {
+
+        skillTracker.innerHTML = data.skills.map(skill => `
+          <button 
+            class="bg-green-100 hover:bg-green-200 text-green-800 text-sm m-1 px-3 py-1 rounded skill-button"
+            data-skill="${skill}" 
+            data-category="${category}">
+            ${skill}
+          </button>
+        `).join('');
+
+        // Attach click to each skill button
+        document.querySelectorAll(".skill-button").forEach(btn => {
+          btn.addEventListener("click", () => {
+            const skill = btn.dataset.skill;
+            const catKey = btn.dataset.category;
+            const categoryKey = `skills:${catKey}`;
+
+            // Load existing or start fresh
+            const existing = JSON.parse(localStorage.getItem(categoryKey)) || [];
+            if (!existing.includes(skill)) {
+              existing.push(skill);
+              localStorage.setItem(categoryKey, JSON.stringify(existing));
+              btn.classList.add("bg-green-300"); // visually confirm save
+            }
+          });
+        });
+
+      } catch (err) {
+        console.error("Skill fetch error:", err);
+        skillTracker.innerHTML = `<p class="text-red-500 text-sm">Failed to load skills.</p>`;
+      }
+    });
+  });
+}
+/*
+function renderTrendingJobs(jobs) {
+  if (!jobs.length) {
+    trendingJobs.innerHTML = `<div class="text-gray-500">No jobs found.</div>`;
+    return;
+  } 
+    const targetId = countryDropdown.value;
+    const foundObject = countries.find(item => item.Code === targetId);
+    const adjacentName = foundObject.Name; 
+    console.log(adjacentName);
+  console.log(jobs);
   trendingJobs.innerHTML = jobs.map(job => `
     <div class="bg-blue-50 p-3 rounded shadow hover:bg-blue-100 transition">
       <h3 class="text-md font-semibold">${job.title}</h3>
-      <p class="text-sm text-gray-600">${job.company} — ${job.location}</p>
-      <a href="${job.url}" target="_blank" class="text-blue-500 text-sm underline">View Job</a>
+      <p class="text-sm text-gray-600">${job.company?.display_name || 'Unknown Company'} — ${job.location?.display_name || 'Unknown Location'}</p>
+      <p><strong>Category:</strong> ${job.category?.label || "N/A"}</p>
+      <p><strong>Salary:</strong> £${job.salary_min?.toLocaleString()} - £${job.salary_max?.toLocaleString()}</p>
+      <p><strong>Contract:</strong> ${job.contract_type || "permanent/temporary"} (${job.contract_time || "full_time/part_time"})</p>
+      <p><strong>created:</strong>${job.created}</p>
+      <p><strong>${adjacentName}</strong> <a href="${job.redirect_url}" target="_blank" class="text-blue-500 text-sm underline">View Job</a></p>
     </div>
   `).join('');
-}
+}*/
 
 // Render course suggestion cards
-function renderCourses(courses) {
-  if (!courses.length) {
+/*async function renderCourses(courses) {
+   console.log("fetched course on rendercourse",courses);
+  if (!courses) {
+    console.log("fetched course on rendercourse",courses);
     courseSuggestions.innerHTML = `<div class="text-gray-500">No courses found.</div>`;
     return;
   }
-  courseSuggestions.innerHTML = courses.map(course => `
+  let cours = courses.json();
+  courseSuggestions.innerHTML = cours.map(course => `
     <div class="bg-green-50 p-3 rounded shadow hover:bg-green-100 transition">
       <h4 class="font-medium text-md">${course.title}</h4>
       <p class="text-sm text-gray-600">${course.provider}</p>
       <a href="${course.url}" target="_blank" class="text-blue-500 text-sm underline">View Course</a>
     </div>
   `).join('');
+}*/
+
+
+ async function renderCourses(courses) {
+  console.log("fetched course on rendercourse", courses);
+
+  if (!courses || !Array.isArray(courses) || courses.length === 0) {
+    courseSuggestions.innerHTML = `<div class="text-gray-500">No courses found.</div>`;
+    return;
+  }
+
+  courseSuggestions.innerHTML = courses.map(course => `
+    <div class="bg-green-50 p-3 rounded shadow hover:bg-green-100 transition">
+      <h4 class="font-bold">${course.title}</h4>
+        <p class="text-sm text-gray-600">Price: ${course.price} • ⭐ ${course.rating}</p>
+        <a href="${course.url}" target="_blank" class="text-blue-600 underline">View Course</a>
+        <img src="${course.image}" alt="course image" loading="lazy" width=300 hight=200> </div>
+    </div>
+  `).join('');
 }
 
-
+import chatBot from "../chatbot";
+chatBot();
 
 

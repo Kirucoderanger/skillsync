@@ -1,6 +1,6 @@
-const fetch = require('node-fetch');
+//const fetch = require('node-fetch');
 
-
+/*
 exports.handler = async (event) => {
   const query = event.queryStringParameters.query || '';
   const isRemote = event.queryStringParameters.remote === 'true';
@@ -40,8 +40,195 @@ exports.handler = async (event) => {
       body: JSON.stringify({ error: 'Failed to fetch jobs' })
     };
   }
-};
+};*/
 
+
+
+
+// netlify/functions/job-search.js
+/*export async function handler(event, context) {
+  const { queryStringParameters } = event;
+  const jobTitle = queryStringParameters.query || "frontend";
+  const remoteOnly = queryStringParameters.remote === "true";
+
+  const appId = process.env.ADZUNA_APP_ID;
+  const appKey = process.env.ADZUNA_APP_KEY;
+
+  const baseUrl = `https://api.adzuna.com/v1/api/jobs/us/search/1`;
+  const params = new URLSearchParams({
+    app_id: appId,
+    app_key: appKey,
+    results_per_page: "10",
+    what: jobTitle,
+    content_type: "application/json",
+  });
+
+  const url = `${baseUrl}?${params.toString()}`;
+
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+
+    // Optionally filter for remote jobs if needed (since Adzuna lacks proper remote filtering)
+    const filtered = remoteOnly
+      ? data.results.filter((job) =>
+          /remote|work from home/i.test(job.location.display_name)
+        )
+      : data.results;
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ results: filtered }),
+    };
+  } catch (err) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: "Failed to fetch jobs", details: err.message }),
+    };
+  }
+}
+*/
+
+// netlify/functions/job-search.mjs
+//import fetch from 'node-fetch';
+/*
+export async function handler(event) {
+  try {
+    const { query = 'developer', country = 'us', remote = '' } = event.queryStringParameters;
+
+    const appId = process.env.VITE_ADZUNA_APP_ID;
+    const appKey = process.env.VITE_ADZUNA_APP_KEY;
+
+    if (!appId || !appKey) {
+      console.error('Missing APP ID or APP KEY');
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ error: 'Missing API credentials' }),
+      };
+    }
+
+    //const url = `https://api.adzuna.com/v1/api/jobs/${country}/search/1?app_id=${appId}&app_key=${appKey}&results_per_page=10&what=${encodeURIComponent(query)}&content_type=application/json${remote === 'true' ? '&remote=1' : ''}`;
+    //const url = `https://api.adzuna.com/v1/api/jobs/${country}/search/1?app_id=${appId}&app_key=${appKey}&results_per_page=10&content_type=application/json`;
+      const url = `https://api.adzuna.com/v1/api/jobs/${country}/search/1?app_id=${appId}&app_key=${appKey}&what=${encodeURIComponent(query)}&results_per_page=10&content_type=application/json${remoteOnly ? '&remote=1' : ''}`;
+
+    console.log('Requesting:', url);
+
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`Adzuna API error: ${response.status}`);
+
+    const data = await response.json();
+
+    return {
+      statusCode: 200,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data.results),
+    };
+  } catch (err) {
+    console.error('Job search function error:', err.message);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: err.message }),
+    };
+  }
+}
+*/
+
+
+export async function handler(event, context) {
+
+  const appId = process.env.VITE_ADZUNA_APP_ID;
+  const appKey = process.env.VITE_ADZUNA_APP_KEY;
+
+
+   // Get query params from the request URL
+  const params = event.queryStringParameters;
+  const title = params.title;
+  const category = params.category;
+  const date = params.date;
+  const country = params.country;
+  
+  
+  //const url = "https://api.adzuna.com/v1/api/jobs/gb/search/20?app_id=65231098&app_key=3b76c3fd0b141cc7c4d20f934ead9253&content-type=application/json";
+  //const url = "https://api.adzuna.com/v1/api/jobs/gb/search/5?app_id=65231098&app_key=3b76c3fd0b141cc7c4d20f934ead9253&results_per_page=10&what=frontend";
+  //const url = `https://api.adzuna.com/v1/api/jobs/${country}/search/1?app_id=${appId}&app_key=${appKey}&what=${encodeURIComponent(query)}&results_per_page=10&content_type=application/json${remoteOnly ? '&remote=1' : ''}`;
+  //const url = `https://api.adzuna.com/v1/api/jobs/gb/search/5?app_id=65231098&app_key=3b76c3fd0b141cc7c4d20f934ead9253&results_per_page=10&what=${title}&content-type=application/json`;
+  const url = `https://api.adzuna.com/v1/api/jobs/${country}/search/5?app_id=${appId}&app_key=${appKey}&results_per_page=10&what=${title}&what_and=${category}&max_days_old=${date}&content-type=application/json`;
+
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify(data),
+      headers: {
+        "Access-Control-Allow-Origin": "*", // Allow local dev
+        "Content-Type": "application/json",
+      },
+    };
+  } catch (error) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: error.message }),
+    };
+  }
+}
+
+
+
+/*
+export async function handler(event) {
+  try {
+    const { query = 'developer', country = 'us', remote = '' } = event.queryStringParameters;
+
+    const appId = process.env.VITE_ADZUNA_APP_ID;
+    const appKey = process.env.VITE_ADZUNA_APP_KEY;
+
+    const url = `https://api.adzuna.com/v1/api/jobs/${country}/search/1?app_id=${appId}&app_key=${appKey}&results_per_page=10&what=${encodeURIComponent(query)}&content_type=application/json${remote ? '&remote=1' : ''}`;
+
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`API error ${response.status}`);
+
+    const data = await response.json();
+
+    return {
+      statusCode: 200,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data.results),
+    };
+  } catch (err) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: err.message }),
+    };
+  }
+}
+
+*/
+/*export async function handler(event) {
+  try {
+    const params = new URLSearchParams(event.queryStringParameters);
+    const query = params.get('query') || 'developer';
+    const country = params.get('country') || 'us';
+
+    const baseUrl = `https://api.adzuna.com/v1/api/jobs/${country}/search/1`;
+    const appId = process.env.VITE_ADZUNA_APP_ID;
+    const appKey = process.env.VITE_ADZUNA_APP_KEY;
+
+    const response = await fetch(`${baseUrl}?app_id=${appId}&app_key=${appKey}&what=${query}`);
+    const data = await response.json();
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify(data),
+    };
+  } catch (error) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: error.message }),
+    };
+  }
+}*/
 
 
 /*

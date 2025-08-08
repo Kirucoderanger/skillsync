@@ -169,7 +169,17 @@ function addSkill(skill) {
   }
 }
 
-function generateCourses(skills) {
+import fetchCourses from "../courseEngine/courseSuggest.mjs";
+import renderCourses from "../../js/renderfunctions.js";
+   
+async function generateCourses(skills) {
+  const courseSuggestions = document.querySelector("#course-suggestions");
+
+  const courses = await fetchCourses(skills);
+  console.log(courses);
+  renderCourses(courses);
+
+/*
   courseSuggestions.innerHTML = "";
   skills.forEach(skill => {
     if (mockCourses[skill]) {
@@ -185,7 +195,7 @@ function generateCourses(skills) {
       `;
       courseSuggestions.appendChild(div);
     }
-  });
+  });*/
 }
 
 // ---------------------------
@@ -214,4 +224,174 @@ function renderSkillTracker() {
 // On Load
 // ---------------------------
 renderSkillTracker();
+
+
+const categorySelect = document.getElementById("career-goal");
+
+
+function updateCategoryDropdown() {
+  const categoryDropdown = document.getElementById("career-goal");
+  //categoryDropdown.innerHTML = ""; // clear previous
+
+  //getSkillCategories();
+
+  // Iterate all localStorage keys
+  /*for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key.startsWith("skill:")) {
+      const category = key.replace("skill:", "");
+
+      const option = document.createElement("option");
+      option.value = category;
+      option.textContent = category;
+      categoryDropdown.appendChild(option);
+    }
+  }*/
+ const skillsByCategory = getSkillCategories();
+
+// Fill category dropdown
+const categorySelect = document.getElementById("career-goal");
+for (const category in skillsByCategory) {
+  const option = document.createElement("option");
+  option.value = category;
+  option.textContent = category;
+  categorySelect.appendChild(option);
+}
+
+
+
+categorySelect.addEventListener("change", (e) => {
+  const skillList = document.getElementById("skills-container");
+  skillList.innerHTML = ""; // clear previous
+
+  const selectedCategory = e.target.value;
+  const skills = skillsByCategory[selectedCategory] || [];
+
+  /*skills.forEach(skill => {
+    const li = document.createElement("li");
+    li.textContent = skill;
+    skillList.appendChild(li);
+  });*/
+
+  skills.forEach(skill => {
+    const li = document.createElement("li");
+    li.className = "bg-blue-100 text-blue-800 px-3 py-1 m-1 rounded cursor-pointer hover:bg-blue-200";
+    li.textContent = skill;
+    li.addEventListener("click", () => {
+      addSkill(skill);
+      generateCourses(skill);
+    });
+    trendingSkillsList.appendChild(li);
+  });
+
+  //generateCourses(skills);
+
+  
+
+
+
+});
+
+}
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  updateCategoryDropdown();
+});
+
+
+
+function getAllStoredSkills() {
+  const skillData = {};
+
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+
+    if (key.startsWith("skill-")) {
+      const category = key.replace("skill-", "");
+      const skills = JSON.parse(localStorage.getItem(key));
+      skillData[category] = skills;
+    }
+  }
+
+  return skillData; // { "Retail Analytics": [...], "Category Management": [...] }
+}
+
+
+
+const skillData = getAllStoredSkills();
+const categoryDropdown = document.getElementById("career-goal");
+
+Object.keys(skillData).forEach(category => {
+  const option = document.createElement("option");
+  option.value = category;
+  option.textContent = category;
+  categoryDropdown.appendChild(option);
+});
+
+
+
+
+const skillListContainer = document.getElementById("skillList");
+
+categoryDropdown.addEventListener("change", () => {
+  const selectedCategory = categoryDropdown.value;
+  const skills = getAllStoredSkills()[selectedCategory] || [];
+
+  skillListContainer.innerHTML = skills.map(skill => `
+    <button class="bg-green-100 hover:bg-green-200 text-green-800 text-sm m-1 px-3 py-1 rounded skill-button">
+      ${skill}
+    </button>
+  `).join('');
+});
+
+
+function getSkillCategories() {
+  const skills = {};
+
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+
+    if (key.startsWith("skills:")) {
+      try {
+        const value = JSON.parse(localStorage.getItem(key));
+        if (Array.isArray(value)) {
+          const category = key.replace("skills:", ""); // remove prefix
+          skills[category] = value;
+        }
+      } catch (e) {
+        console.warn(`Invalid skill data at ${key}`);
+      }
+    }
+  }
+
+  return skills;
+}
+
+
+/*const skillsByCategory = getSkillCategories();
+
+// Fill category dropdown
+const categorySelect = document.getElementById("category-dropdown");
+for (const category in skillsByCategory) {
+  const option = document.createElement("option");
+  option.value = category;
+  option.textContent = category;
+  categorySelect.appendChild(option);
+}*/
+
+// On category change → populate skill list
+/*categorySelect.addEventListener("change", (e) => {
+  const skillList = document.getElementById("skills-container");
+  skillList.innerHTML = ""; // clear previous
+
+  const selectedCategory = e.target.value;
+  const skills = skillsByCategory[selectedCategory] || [];
+
+  skills.forEach(skill => {
+    const li = document.createElement("li");
+    li.textContent = skill;
+    skillList.appendChild(li);
+  });
+});*/
 

@@ -2,7 +2,7 @@ const fetch = require('node-fetch');
 
 exports.handler = async function (event) {
   const { prompt, messages, mode = 'chat' } = JSON.parse(event.body || '{}');
-  const apiKey = process.env.OPENAI_API_KEY;
+  const apiKey = process.env.VITE_OPENAI_API_KEY;
 
   const body = mode === 'chat' ? {
     model: "gpt-4",
