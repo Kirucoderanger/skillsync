@@ -56,7 +56,8 @@ function appendMessage(sender, text) {
   msg.scrollIntoView();
 }
 
-const openAiKey = process.env.VITE_OPENAI_API_KEY;
+//const openAiKey = process.env.VITE_OPENAI_API_KEY;
+//const cohereKey = process.env.VITE_COHERE_KEY;
 
 async function getBotReply1(message) {
   const response = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -80,7 +81,7 @@ const response = await fetch("https://api.cohere.com/v2/chat", {
   method: "POST",
   headers: {
     "accept": "application/json",
-    "Authorization": "Bearer sm88JGGoo671a3ArJa9SFelnxW0V0fKcoQlJAwZ4",
+    "Authorization": `Bearer ${cohereKey}`,
     "Content-Type": "application/json"
     
   },

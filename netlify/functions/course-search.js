@@ -1,5 +1,5 @@
 // netlify/functions/course-search.js
-export async function handler(event) {
+/*export async function handler(event) {
   const params = event.queryStringParameters;
   const title = params.title;
   const rapidAPI_KEY = process.env.VITE_X_RAPIDAPI_KEY;
@@ -10,6 +10,7 @@ export async function handler(event) {
     headers: {
       'x-rapidapi-key': rapidAPI_KEY,
       'x-rapidapi-host': 'paid-udemy-course-for-free.p.rapidapi.com'
+      
     }
   };
 
@@ -74,8 +75,8 @@ export async function handler(event) {
     };
   }
 }
-
-/*export async function handler(event) {
+*/
+export async function handler(event) {
     const params = event.queryStringParameters;
     const title = params.title;
     const rapidAPI_KEY = process.env.VITE_X_RAPIDAPI_KEY;
@@ -99,6 +100,9 @@ export async function handler(event) {
                 'x-rapidapi-host': 'udemy-paid-courses-for-free-api.p.rapidapi.com'
             }
         };
+
+
+        
 
     try {
         const response = await fetch(url, options);
@@ -126,7 +130,7 @@ export async function handler(event) {
 
         return {
             statusCode: 200,
-            body: JSON.stringify(courses2),
+            body: JSON.stringify(json),
             headers: {
                 "Access-Control-Allow-Origin": "*", // Allow local dev
                 "Content-Type": "application/json",
@@ -143,7 +147,7 @@ export async function handler(event) {
         
     }
 
-}*/
+}
 
 /*export async function handler(event) {
   const query = event.queryStringParameters.query || 'frontend';
