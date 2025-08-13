@@ -140,32 +140,63 @@ const mockCourses = {
 // ---------------------------
 // Event Handlers
 // ---------------------------
-searchBtn.addEventListener("click", () => {
+searchBtn.addEventListener("click", async() => {
   const title = jobSearchInput.value.trim().toLowerCase();
-  if (!title || !mockSkills[title]) {
-    trendingSkillsList.innerHTML = `<li class="text-red-500">No skills found for "${title}"</li>`;
-    return;
-  }
+  //if (!title || !mockSkills[title]) {
+    //trendingSkillsList.innerHTML = `<li class="text-red-500">No skills found for "${title}"</li>`;
+    //return;
+  //}
+  const res = await fetch(`/.netlify/functions/extract-skill?title=${encodeURIComponent(title)}`);
+  const data  = await res.json();
 
-  const skills = mockSkills[title];
+  /*skillTracker.innerHTML = data.skills.map(skill => `
+          <button 
+            class="bg-green-100 hover:bg-green-200 text-green-800 text-sm m-1 px-3 py-1 rounded skill-button"
+            data-skill="${skill}" 
+            data-category="${category}">
+            ${skill}
+          </button>
+        `).join('');*/
+
+  //const skills = mockSkills[title];
+  const skills = data.skills;
   trendingSkillsList.innerHTML = "";
   skills.forEach(skill => {
     const li = document.createElement("li");
     li.className = "bg-blue-100 text-blue-800 px-3 py-1 m-1 rounded cursor-pointer hover:bg-blue-200";
     li.textContent = skill;
-    li.addEventListener("click", () => addSkill(skill));
+    li.addEventListener("click", () => {
+      const categoryKey = `skills:${title}`;
+      const existing = JSON.parse(localStorage.getItem(categoryKey)) || [];
+            if (!existing.includes(skill)) {
+              existing.push(skill);
+              localStorage.setItem(categoryKey, JSON.stringify(existing));
+              //btn.classList.add("bg-green-300"); // visually confirm save
+            }
+
+
+
+
+      addSkill(skill, title);
+      generateCourses(skill);
+      renderSkillTracker(title);
+    });
     trendingSkillsList.appendChild(li);
   });
 
-  generateCourses(skills);
+  //generateCourses(skills);
 });
 
-function addSkill(skill) {
+
+
+
+
+function addSkill(skill, category) {
   let tracked = JSON.parse(localStorage.getItem("trackedSkills") || "[]");
   if (!tracked.includes(skill)) {
     tracked.push(skill);
-    localStorage.setItem("trackedSkills", JSON.stringify(tracked));
-    renderSkillTracker();
+    localStorage.setItem(`${category}-trackedSkills`, JSON.stringify(tracked));
+    renderSkillTracker(category);
   }
 }
 
@@ -201,8 +232,8 @@ async function generateCourses(skills) {
 // ---------------------------
 // Render Skill Tracker
 // ---------------------------
-function renderSkillTracker() {
-  const skills = JSON.parse(localStorage.getItem("trackedSkills") || "[]");
+function renderSkillTracker(category) {
+  const skills = JSON.parse(localStorage.getItem(`${category}-trackedSkills`) || "[]");
   userSkillStatus.innerHTML = "";
 
   skills.forEach(skill => {
@@ -223,7 +254,7 @@ function renderSkillTracker() {
 // ---------------------------
 // On Load
 // ---------------------------
-renderSkillTracker();
+//renderSkillTracker();
 
 
 const categorySelect = document.getElementById("career-goal");
@@ -261,11 +292,16 @@ for (const category in skillsByCategory) {
 
 
 categorySelect.addEventListener("change", (e) => {
+  const category = document.getElementById("career-goal").value;
   const skillList = document.getElementById("skills-container");
   skillList.innerHTML = ""; // clear previous
 
   const selectedCategory = e.target.value;
+  
   const skills = skillsByCategory[selectedCategory] || [];
+  //const skills = selectedCategory || [];
+  console.log("selectedCategory", skills )
+  console.log("selectedCategory", category )
 
   /*skills.forEach(skill => {
     const li = document.createElement("li");
@@ -278,8 +314,9 @@ categorySelect.addEventListener("change", (e) => {
     li.className = "bg-blue-100 text-blue-800 px-3 py-1 m-1 rounded cursor-pointer hover:bg-blue-200";
     li.textContent = skill;
     li.addEventListener("click", () => {
-      addSkill(skill);
+      addSkill(skill, category);
       generateCourses(skill);
+      renderSkillTracker(category);
     });
     trendingSkillsList.appendChild(li);
   });

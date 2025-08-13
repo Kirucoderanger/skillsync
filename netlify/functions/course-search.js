@@ -76,6 +76,14 @@
   }
 }
 */
+
+const mockCourses = {
+  "HTML": { title: "Master HTML5", provider: "Udemy", progress: 20 },
+  "CSS": { title: "Modern CSS from Scratch", provider: "Coursera", progress: 0 },
+  "JavaScript": { title: "JavaScript Bootcamp", provider: "Udemy", progress: 50 },
+  "React": { title: "React for Beginners", provider: "Coursera", progress: 0 },
+  "Tailwind": { title: "Tailwind in Action", provider: "Udemy", progress: 0 }
+};
 export async function handler(event) {
     const params = event.queryStringParameters;
     const title = params.title;
@@ -130,7 +138,7 @@ export async function handler(event) {
 
         return {
             statusCode: 200,
-            body: JSON.stringify(json),
+            body: JSON.stringify(json || mockCourses),
             headers: {
                 "Access-Control-Allow-Origin": "*", // Allow local dev
                 "Content-Type": "application/json",

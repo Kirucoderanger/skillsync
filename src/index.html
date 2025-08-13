@@ -4,82 +4,175 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SkillSync – Smart Career & Learning Tracker</title>
+
+    <!-- Tailwind CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="/styles/style.css" />
+
     <script type="module" src="js/main.js"></script>
   </head>
-  <body>
-    <header class="header"  id="header"></header>
+  <body class="bg-gray-100 text-gray-800 font-sans">
+    <!-- Header -->
+    <header
+      id="header"
+      class="bg-white shadow-md p-4 flex items-center justify-between"
+    >
+      <h1 class="text-2xl font-bold text-blue-600">SkillSync</h1>
+      <nav>
+        <ul class="flex gap-6 text-gray-600 font-medium">
+          <li><a href="#" class="hover:text-blue-500">Dashboard</a></li>
+          <li><a href="#" class="hover:text-blue-500">Skills</a></li>
+          <li><a href="#" class="hover:text-blue-500">Jobs</a></li>
+        </ul>
+      </nav>
+    </header>
+
     <!-- Main Content -->
-  <main class="dashboard">
-    <!-- Left Sidebar: Skill Tracker -->
-    <aside class="sidebar">
-      <h2>Skill Tracker</h2>
-      <ul class="skill-status">
-        <li><input type="checkbox" /> HTML – Completed</li>
-        <li><input type="checkbox" /> CSS – In Progress</li>
-        <li><input type="checkbox" /> JavaScript – To Learn</li>
-      </ul>
-      <div id="app">
-    <h1>Welcome to SkillSync</h1>
-    <div id="skill-tracker"></div>
-    <div id="resume-analyzer"></div>
-    <div id="resume-analyzer"><a href="./modules/skillTracker/JobSkillPathGenerator.html">JobSkill Path Generator</a></div>
-    <div id="resume-analyzer"><a href="./modules/search/livejobsearch.html">Live Job Search</a></div>
-    </div>
-      <div class="progress-chart">
-        <h3>Progress Summary</h3>
-        <canvas id="progressChart"></canvas>
-      </div>
-    </aside>
+    <main class="dashboard grid grid-cols-1 md:grid-cols-4 gap-6 p-6">
+      <!-- Left Sidebar -->
+      <aside
+        class="sidebar bg-white rounded-lg shadow p-4 space-y-6 md:col-span-1"
+      >
+        <h2 class="text-lg font-semibold border-b pb-2">Skill Tracker</h2>
+        <ul class="skill-status space-y-2 text-sm">
+          <li class="flex items-center gap-2">
+            <input type="checkbox" checked class="accent-blue-500" /> HTML –
+            Completed
+          </li>
+          <li class="flex items-center gap-2">
+            <input type="checkbox" class="accent-blue-500" /> CSS – In Progress
+          </li>
+          <li class="flex items-center gap-2">
+            <input type="checkbox" class="accent-blue-500" /> JavaScript – To
+            Learn
+          </li>
+        </ul>
 
-    <!-- Main Widgets -->
-    <section class="widgets">
-      <!-- Trending Jobs & Skills -->
-      <div class="card">
-        <h2>Trending Jobs & Skills</h2>
-        <div class="card-list">
-          <div class="card-item">Frontend Developer</div>
-          <div class="card-item">React.js</div>
-          <div class="card-item">UI/UX Design</div>
-        </div>
-      </div>
-
-      <!-- Career Score Panel -->
-      <div class="card">
-        <h2>Career Readiness Score</h2>
-        <p>Your current score: <strong>72/100</strong></p>
-        <button class="upload-btn">Upload Resume</button>
-      </div>
-
-      <!-- Learning Path -->
-      <div class="card">
-        <h2>Learning Path</h2>
-        <div class="learning-cards">
-          <div class="learning-card">
-            <p>React for Beginners</p>
-            <progress value="40" max="100"></progress>
-            <button>Continue</button>
+        <!-- App Links -->
+        <div id="app" class="space-y-2">
+          <div id="skill-tracker"></div>
+          <div id="resume-analyzer"></div>
+          <div id="SkillPathGenerator">
+            <a
+              href="./modules/skillTracker/JobSkillPathGenerator.html"
+              class="block bg-blue-50 hover:bg-blue-100 p-2 rounded text-blue-600 font-medium transition"
+              >JobSkill Path Generator</a
+            >
           </div>
-          <div class="learning-card">
-            <p>Advanced CSS</p>
-            <progress value="75" max="100"></progress>
-            <button>Track</button>
+          <div id="livejobsearch">
+            <a
+              href="./modules/search/livejobsearch.html"
+              class="block bg-blue-50 hover:bg-blue-100 p-2 rounded text-blue-600 font-medium transition"
+              >Live Job Search</a
+            >
           </div>
         </div>
-      </div>
-    </section>
-  </main>
 
-  <!-- Chatbot Floating Button -->
-  <button class="chatbot-button" id="chatbot-button">💬</button>
-    
-    
-    
-    
-    <footer id="footer"></footer>
+        <!-- Progress Chart -->
+        <div class="progress-chart">
+          <h3 class="font-semibold text-sm mb-2">Progress Summary</h3>
+          <canvas id="progressChart"></canvas>
+        </div>
+      </aside>
+
+      <!-- Main Widgets -->
+      <section class="widgets space-y-6 md:col-span-3">
+        <!-- Trending Jobs -->
+        <div class="card bg-white rounded-lg shadow p-4">
+          <h2 class="text-lg font-semibold mb-4">Trending Jobs & Skills</h2>
+          <div class="card-list flex flex-wrap gap-3">
+            <div
+              class="card-item px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-sm"
+            >
+              Frontend Developer
+            </div>
+            <div
+              class="card-item px-3 py-1 bg-green-50 text-green-600 rounded-full text-sm"
+            >
+              React.js
+            </div>
+            <div
+              class="card-item px-3 py-1 bg-purple-50 text-purple-600 rounded-full text-sm"
+            >
+              UI/UX Design
+            </div>
+          </div>
+        </div>
+
+        <!-- Career Score -->
+        <div class="card bg-white rounded-lg shadow p-4">
+          <h2 class="text-lg font-semibold mb-4">Career Readiness Score</h2>
+          <p class="mb-4">
+            Your current score:
+            <strong class="text-blue-600">72/100</strong>
+          </p>
+          <button
+            class="upload-btn bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+          >
+            Upload Resume
+          </button>
+        </div>
+
+        <!-- Learning Path -->
+        <div class="card bg-white rounded-lg shadow p-4">
+          <h2 class="text-lg font-semibold mb-4">Learning Path</h2>
+          <div class="learning-cards space-y-4">
+            <div
+              class="learning-card p-4 border rounded flex items-center justify-between"
+            >
+              <div class="w-2/3">
+                <p class="font-medium">React for Beginners</p>
+                <progress
+                  value="40"
+                  max="100"
+                  class="w-full h-3 mt-1"
+                ></progress>
+              </div>
+              <button
+                class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 transition"
+              >
+                Continue
+              </button>
+            </div>
+            <div
+              class="learning-card p-4 border rounded flex items-center justify-between"
+            >
+              <div class="w-2/3">
+                <p class="font-medium">Advanced CSS</p>
+                <progress
+                  value="75"
+                  max="100"
+                  class="w-full h-3 mt-1"
+                ></progress>
+              </div>
+              <button
+                class="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 transition"
+              >
+                Track
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Chatbot Button -->
+    <button
+      id="chatbot-button"
+      class="chatbot-button fixed bottom-6 right-6 bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full shadow-lg transition"
+    >
+      💬
+    </button>
+
+    <!-- Footer -->
+    <footer
+      id="footer"
+      class="bg-white shadow p-4 text-center text-sm text-gray-500 mt-6"
+    >
+      &copy; 2025 SkillSync. All rights reserved.
+    </footer>
   </body>
 </html>
-
-
-
-
