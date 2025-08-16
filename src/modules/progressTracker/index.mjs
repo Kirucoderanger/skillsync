@@ -11,3 +11,5 @@ export function renderProgressTracker(containerId) {
     <p>${percent}% Completed</p>
   `;
 }
+
+

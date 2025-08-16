@@ -12,7 +12,7 @@
     />
     <link rel="stylesheet" href="/styles/style.css" />
 
-    <script type="module" src="js/main.js"></script>
+    <script type="module" src="js/main.js" defer></script>
   </head>
   <body class="bg-gray-100 text-gray-800 font-sans">
     <!-- Header -->
@@ -37,25 +37,7 @@
         class="sidebar bg-white rounded-lg shadow p-4 space-y-6 md:col-span-1"
       >
         <h2 class="text-lg font-semibold border-b pb-2">Skill Tracker</h2>
-        <ul class="skill-status space-y-2 text-sm">
-          <li class="flex items-center gap-2">
-            <input type="checkbox" checked class="accent-blue-500" /> HTML –
-            Completed
-          </li>
-          <li class="flex items-center gap-2">
-            <input type="checkbox" class="accent-blue-500" /> CSS – In Progress
-          </li>
-          <li class="flex items-center gap-2">
-            <input type="checkbox" class="accent-blue-500" /> JavaScript – To
-            Learn
-          </li>
-        </ul>
-
-        <!-- App Links -->
-        <div id="app" class="space-y-2">
-          <div id="skill-tracker"></div>
-          <div id="resume-analyzer"></div>
-          <div id="SkillPathGenerator">
+        <div id="SkillPathGenerator">
             <a
               href="./modules/skillTracker/JobSkillPathGenerator.html"
               class="block bg-blue-50 hover:bg-blue-100 p-2 rounded text-blue-600 font-medium transition"
@@ -69,7 +51,27 @@
               >Live Job Search</a
             >
           </div>
+          <div id="progress-tracker">
+            <a
+              href="./modules/progressTracker/progressTracker.html"
+              class="block bg-blue-50 hover:bg-blue-100 p-2 rounded text-blue-600 font-medium transition"
+              >Progress Tracker</a
+            >
+          </div>
         </div>
+        
+
+        <label class="block mb-2 font-medium">Career Goal</label>
+      <select id="career-goal" class="w-full border px-3 py-2 rounded mb-4">
+      <option selected disabled>Select category</option>
+      </select>
+      <div id="user-skill-tracker" class="mt-4"></div>
+
+        <!-- App Links -->
+        <div id="app" class="space-y-2">
+          <div id="skill-tracker"></div>
+          <div id="resume-analyzer"></div>
+          
 
         <!-- Progress Chart -->
         <div class="progress-chart">
@@ -77,33 +79,27 @@
           <canvas id="progressChart"></canvas>
         </div>
       </aside>
+      <div
+        class="widgets bg-white rounded-lg shadow p-4 space-y-6 md:col-span-3"
+      >
+      <h2 class="text-lg font-semibold mb-4">Skill Progress Bar</h2>
+          <div class="progress-bar w-full bg-gray-200 rounded-full h-4 mb-2 " ></div>
 
-      <!-- Main Widgets -->
-      <section class="widgets space-y-6 md:col-span-3">
-        <!-- Trending Jobs -->
-        <div class="card bg-white rounded-lg shadow p-4">
-          <h2 class="text-lg font-semibold mb-4">Trending Jobs & Skills</h2>
-          <div class="card-list flex flex-wrap gap-3">
-            <div
-              class="card-item px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-sm"
-            >
-              Frontend Developer
-            </div>
-            <div
-              class="card-item px-3 py-1 bg-green-50 text-green-600 rounded-full text-sm"
-            >
-              React.js
-            </div>
-            <div
-              class="card-item px-3 py-1 bg-purple-50 text-purple-600 rounded-full text-sm"
-            >
-              UI/UX Design
-            </div>
-          </div>
-        </div>
+    </div>
+    
 
-        <!-- Career Score -->
-        <div class="card bg-white rounded-lg shadow p-4">
+      <!-- Main Widgets 
+      <aside class="sidebar bg-white rounded-lg shadow p-4 space-y-6 md:col-span-1">
+         Trending Jobs 
+        
+          <h2 class="text-lg font-semibold mb-4">Skill Progress Bar</h2>
+          <div class="progress-bar bg-gray-200 rounded-full h-4 mb-2 gap-3" ></div>
+          <h2 class="text-lg font-semibold mb-4">Skill Progress Bar</h2>
+          
+        
+
+        Career Score -->
+        <!--<div class="card bg-white rounded-lg shadow p-4">
           <h2 class="text-lg font-semibold mb-4">Career Readiness Score</h2>
           <p class="mb-4">
             Your current score:
@@ -114,9 +110,9 @@
           >
             Upload Resume
           </button>
-        </div>
+        </div>-->
 
-        <!-- Learning Path -->
+        <!-- Learning Path 
         <div class="card bg-white rounded-lg shadow p-4">
           <h2 class="text-lg font-semibold mb-4">Learning Path</h2>
           <div class="learning-cards space-y-4">
@@ -155,17 +151,47 @@
               </button>
             </div>
           </div>
+          <ul class="skill-status space-y-2 text-sm">
+          <li class="flex items-center gap-2">
+            <input type="checkbox" checked class="accent-blue-500" /> HTML –
+            Completed
+          </li>
+          <li class="flex items-center gap-2">
+            <input type="checkbox" class="accent-blue-500" /> CSS – In Progress
+          </li>
+          <li class="flex items-center gap-2">
+            <input type="checkbox" class="accent-blue-500" /> JavaScript – To
+            Learn
+          </li>
+        </ul>
         </div>
-      </section>
+      </aside>-->
     </main>
 
     <!-- Chatbot Button -->
     <button
-      id="chatbot-button"
+      id="openchatbot"
       class="chatbot-button fixed bottom-6 right-6 bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full shadow-lg transition"
     >
       💬
     </button>
+    <!-- Toggle Button 
+<button id="openchatbot" class="fixed bottom-6 right-6 bg-blue-600 text-white px-4 py-2 rounded-full z-50">
+  💬 Career Bot
+</button>-->
+
+    <!-- Chatbot Panel -->
+<div id="chatbotpanel" class="hidden fixed bottom-20 right-6 w-80 h-96 bg-white border border-gray-300 shadow-xl rounded-md flex flex-col z-50">
+  <div class="flex justify-between items-center p-3 bg-blue-600 text-white rounded-t-md">
+    <span>Career Assistant</span>
+    <button id="closechatbot">✖</button>
+  </div>
+  <div id="chat-messages" class="flex-1 p-3 overflow-y-auto text-sm"></div>
+  <form id="chat-form" class="flex p-3 border-t">
+    <input type="text" id="chat-input" class="flex-1 border border-gray-300 rounded px-2" placeholder="Ask me anything about your career..." />
+    <button type="submit" class="ml-2 text-blue-600">Send</button>
+  </form>
+</div>
 
     <!-- Footer -->
     <footer

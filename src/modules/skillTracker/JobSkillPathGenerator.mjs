@@ -188,17 +188,52 @@ searchBtn.addEventListener("click", async() => {
 });
 
 
+// ===== Utility Functions =====
+function getSkills() {
+  return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+}
+
+function saveSkills(skills) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(skills));
+}
+
+function generateId() {
+  return Date.now();
+}
+
+
+function addSkill(skill, category, level = "To Learn") {
+  let tracked = JSON.parse(localStorage.getItem(`${category}-trackedSkills`) || "[]");
+  if (!tracked.some(s => s.name === skill)) {
+  //if (!tracked.includes(skill)) {
+  //let skills = getSkills();
+  //let level = "To Learn"; // default level
+  const newSkill = {
+    //id: generateId(),
+    name: skill,
+    level: level,
+    //skill: level,
+    //history: [{ date: new Date().toLocaleDateString(), progress }]
+  };
+  tracked.push(newSkill);
+  localStorage.setItem(`${category}-trackedSkills`, JSON.stringify(tracked));
+  renderSkillTracker(category);
+  //saveSkills(tracked);
+  //renderSkills();
+}
+}
 
 
 
-function addSkill(skill, category) {
-  let tracked = JSON.parse(localStorage.getItem("trackedSkills") || "[]");
+
+/*function addSkill(skill, category) {
+  let tracked = JSON.parse(localStorage.getItem(`${category}-trackedSkills`) || "[]");
   if (!tracked.includes(skill)) {
     tracked.push(skill);
     localStorage.setItem(`${category}-trackedSkills`, JSON.stringify(tracked));
     renderSkillTracker(category);
   }
-}
+}*/
 
 import fetchCourses from "../courseEngine/courseSuggest.mjs";
 import renderCourses from "../../js/renderfunctions.js";
@@ -236,18 +271,56 @@ function renderSkillTracker(category) {
   const skills = JSON.parse(localStorage.getItem(`${category}-trackedSkills`) || "[]");
   userSkillStatus.innerHTML = "";
 
-  skills.forEach(skill => {
+  /*skills.forEach(skill => {
     const div = document.createElement("div");
     div.className = "flex justify-between items-center bg-gray-100 p-2 rounded mb-1";
     div.innerHTML = `
-      <span>${skill}</span>
+      <span>${skill.name}</span>
       <select class="ml-4 rounded border-gray-300 text-sm">
-        <option>To Learn</option>
-        <option>In Progress</option>
-        <option>Completed</option>
+        <option value="10">To Learn</option>
+        <option value="50">In Progress</option>
+        <option value="100">Completed</option>
       </select>
     `;
-    userSkillStatus.appendChild(div);
+    userSkillStatus.appendChild(div);*/
+
+
+    
+     skills.forEach((skill, index) => {
+    const skillDiv = document.createElement("div");
+    skillDiv.className = "flex justify-between items-center bg-gray-100 p-2 rounded mb-1";
+
+    skillDiv.innerHTML = `
+      <span class="font-medium">${skill.name}</span>
+      <select data-index="${index}" class="ml-4 rounded border-gray-300 text-sm">
+        <option value="10" ${skill.level === "To Learn" ? "selected" : ""}>To Learn</option>
+        <option value="50" ${skill.level === "In Progress" ? "selected" : ""}>In Progress</option>
+        <option value="100" ${skill.level === "Completed" ? "selected" : ""}>Completed</option>
+      </select>
+    `;
+
+    userSkillStatus.appendChild(skillDiv);  
+  });
+
+
+  // Mapping for option values
+const levelMap = {
+  10: "To Learn",
+  50: "In Progress",
+  100: "Completed"
+};
+
+  document.querySelectorAll("select").forEach(select => {
+    select.addEventListener("change", (e) => {
+      const index = e.target.getAttribute("data-index");
+      const newLevel = levelMap[e.target.value];
+      
+      // Update in array
+      skills[index].level = newLevel;
+
+      // Save back to localStorage
+      localStorage.setItem(`${category}-trackedSkills`, JSON.stringify(skills));
+    });
   });
 }
 
@@ -260,7 +333,7 @@ function renderSkillTracker(category) {
 const categorySelect = document.getElementById("career-goal");
 
 
-function updateCategoryDropdown() {
+ function updateCategoryDropdown() {
   const categoryDropdown = document.getElementById("career-goal");
   //categoryDropdown.innerHTML = ""; // clear previous
 
@@ -432,3 +505,5 @@ for (const category in skillsByCategory) {
   });
 });*/
 
+import chatBot from "../chatbot";
+chatBot();
