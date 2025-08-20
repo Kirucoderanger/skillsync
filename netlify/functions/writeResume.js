@@ -10,10 +10,11 @@ export const handler = async (event) => {
     const cohere = new CohereClient({ token: process.env.VITE_COHERE_KEY });
 
     const response = await cohere.chat({
-      model: "command-r-plus",
+      model: "command-a-03-2025",
       message: `
 You are a professional resume writer.
 Rewrite the resume using the analysis and job description.
+
 
 Analysis:
 ${JSON.stringify(analysis)}

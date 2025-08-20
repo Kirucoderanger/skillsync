@@ -25,6 +25,79 @@ let jobs = [];
 let profile = { name: '', skills: {}, projects: [], certifications: [] };
 let currentJob = null;
 
+//let profile = { name: '', skills: {}, projects: [], certifications: [] };
+
+const levelMap = {
+  "To Learn": 10,
+  "In Progress": 50,
+  "Completed": 100
+};
+
+document.addEventListener("DOMContentLoaded", () => {
+    const keys = Object.keys(localStorage).filter(k => k.includes("trackedSkills"));
+
+    keys.forEach(key => {
+        const raw = localStorage.getItem(key);
+        if (!raw) return;
+
+        let parsed;
+        try {
+            parsed = JSON.parse(raw);
+        } catch (e) {
+            console.warn("Invalid trackedSkills format in storage:", raw);
+            return;
+        }
+
+        // Handle array format: [ {name:'React', level:'In Progress'}, ... ]
+        if (Array.isArray(parsed)) {
+            parsed.forEach(item => {
+                if (!item.name) return;
+                let lvl = item.level;
+                if (typeof lvl === "string" && levelMap[lvl]) {
+                    profile.skills[item.name] = levelMap[lvl];
+                } else {
+                    profile.skills[item.name] = Number(lvl) || 10;
+                }
+            });
+        }
+        // Handle object map format: { "React": "In Progress", "ffffffff": 60 }
+        else if (typeof parsed === "object") {
+            Object.keys(parsed).forEach(skill => {
+                let lvl = parsed[skill];
+                if (typeof lvl === "object" && lvl.level) {
+                    // case: { React: {level: "Completed"} }
+                    lvl = lvl.level;
+                }
+                if (typeof lvl === "string" && levelMap[lvl]) {
+                    profile.skills[skill] = levelMap[lvl];
+                } else {
+                    profile.skills[skill] = Number(lvl) || 10;
+                }
+            });
+        }
+    });
+
+    console.log("Loaded + normalized skills:", profile.skills);
+    renderSkills();
+    //refreshFitAndActions();
+});
+
+/*document.addEventListener("DOMContentLoaded", () => {
+    // load skills from localStorage which key includes trackedSkills
+    const keys = Object.keys(localStorage).filter(k => k.includes("trackedSkills"));
+
+    keys.forEach(key => {
+        const trackedSkills = localStorage.getItem(key);
+        if (trackedSkills) {
+            profile.skills = { ...profile.skills, ...JSON.parse(trackedSkills) };
+        }
+    });
+    console.log("Loaded skills from localStorage:", profile.skills);
+    renderSkills(); 
+    //refreshFitAndActions();
+
+});*/
+
 // helper: render skills list
 function renderSkills() {
   skillsContainer.innerHTML = '';
@@ -331,17 +404,32 @@ async function getAnalysis() {
     const data = await res.json();
     if (data.error) throw new Error(data.error);
 
-    analysis = data.analysis;
+    //analysis = data.analysis;
 
-    appendOutput("Analysis", analysis, "analysis");
 
+    let analysisData;
+    try {
+        let raw = data.analysis;
+        if (typeof raw === "string") {
+            // remove markdown code fences (```json ... ```)
+            raw = raw.replace(/```json|```/g, "").trim();
+            analysisData = JSON.parse(raw);
+        } else {
+            analysisData = raw; // already an object
+            }
+            // Display only the analysisReport to the user
+            const report = analysisData.analysisReport;
+            console.log("Analysis Data:", report);
+            appendOutput("Analysis Report", report, "analysisReport");
+            // Save full JSON for later use
+            localStorage.setItem("analysisData", JSON.stringify(report));
+        } catch (e) {
+            console.error("Parsing error:", e, data.analysis);
+            output.textContent = "Error: Could not parse analysis response.";
+        }
+        const { analysisReport, ...trimmedData } = analysisData;
+        analysis = trimmedData; // keep only the trimmed data
     statusEl.textContent = "Analysis complete!";
-    //outputEl.textContent = analysis || JSON.stringify(data, null, 2);
-
-    //appendOutput("Resume Text", resumeText, "resumeText");
-    //appendOutput("Job Description", jobDescription, "jobDescription");
-    
-
     return { resumeText, jobDescription, analysis };
   } catch (err) {
     statusEl.textContent = "Error:";
@@ -536,6 +624,7 @@ addSkillBtn.addEventListener('click', () => {
   profile.skills[name] = lvl;
   renderSkills(); refreshFitAndActions();
   newSkillName.value = ''; newSkillLevel.value = 60;
+  console.log('Added skill:', profile.skills);
 });
 
 // compute fit & fetch suggested actions

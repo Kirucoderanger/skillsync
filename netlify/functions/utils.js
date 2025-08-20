@@ -1,9 +1,9 @@
-import fs from 'fs';
-import pdfParse from 'pdf-parse';
-import mammoth from 'mammoth';
+//import fs from 'fs';
+//import pdfParse from 'pdf-parse';
+//import mammoth from 'mammoth';
 //import { Configuration, OpenAIApi } from 'openai';
-import { Document, Packer, Paragraph, TextRun } from 'docx';
-import PDFDocument from 'pdfkit';
+//import { Document, Packer, Paragraph, TextRun } from 'docx';
+//import PDFDocument from 'pdfkit';
 
 // init OpenAI client
 //const openai = new OpenAIApi(new Configuration({ apiKey: process.env.OPENAI_API_KEY }));
@@ -25,8 +25,36 @@ export async function parseFileToText(file) {
     try { return await fs.promises.readFile(file.filepath, 'utf8'); } catch { return ''; }
   }
 }
+
+
+
+// utils.js
+//import cohere from 'cohere-ai';
+import { CohereClient } from "cohere-ai";
+
+//const cohere = new CohereClient(process.env.VITE_COHERE_KEY);
+const cohere = new CohereClient({ token: process.env.VITE_COHERE_KEY });
+
+export async function callLLM(prompt, system = "You are a helpful assistant.") {
+  try {
+    const resp = await cohere.chat({
+      model: "command-r-plus",   // good for reasoning + JSON extraction
+      message: prompt,
+      preamble: system,
+      temperature: 0.2,
+    });
+
+    // Cohere returns text directly
+    return resp.text || '';
+  } catch (err) {
+    console.error("Cohere API error:", err);
+    return '';
+  }
+}
+
+
 // LLM helpers
-export async function callLLM(prompt, system="You are a helpful assistant.") {
+export async function callLLMOpenAi(prompt, system="You are a helpful assistant.") {
   const resp = await openai.createChatCompletion({
     model: "gpt-4",
     messages: [

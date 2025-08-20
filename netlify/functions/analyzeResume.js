@@ -13,14 +13,15 @@ export const handler = async (event) => {
     const response = await cohere.chat({
       model: "command-r-plus",
       message: `
-You are an expert career coach AI.
-Analyze the resume against the job description.
-Respond ONLY in valid JSON with fields:
-{
-  "strengths": [],
-  "gaps": [],
-  "keywordsToAdd": []
-}
+      You are an expert career coach AI.
+      Analyze the resume against the job description.
+      Return your response strictly in JSON with the following keys:
+      - strengths: array of resume strengths
+      - gaps: array of missing or weak areas
+      - suggestions: array of practical recommendations
+      - keywordsToAdd: array of keywords to add to the resume
+      - analysisReport: a single string summarizing your analysis in human-friendly language
+        
 
 Resume:
 ${resumeText}
