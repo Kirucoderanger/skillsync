@@ -22,6 +22,7 @@ export default defineConfig({
         courseEngine: resolve(__dirname, "src/modules/courseEngine/courseSuggest.html"),
         chatbot: resolve(__dirname, "src/modules/chatbot/chatbot.html"),
         skillTracker: resolve(__dirname, "src/modules/skillTracker/JobSkillPathGenerator.html"),
+        careerAdviser: resolve(__dirname, "src/modules/careerAdviser/llmAnalyzer.html"),
         //cart: resolve(__dirname, "src/cart/index.html"),
         //checkout: resolve(__dirname, "src/checkout/index.html"),
         //product: resolve(__dirname, "src/product_pages/index.html"),
