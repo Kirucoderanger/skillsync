@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>SkillSync — Resume & Career Assistant</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-800">
+    <header class="bg-white shadow-md fixed top-0 w-full z-50">
+      <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        <div class="text-xl font-bold text-blue-600">SyncSkill — Resume & Career Assistant</div>
+        <nav class="space-x-4 hidden md:flex">
+          <a href="/" class="hover:text-blue-500">Dashboard</a>
+          <a href="../skillTracker/JobSkillPathGenerator.html" class="hover:text-blue-500">Skill Tracker</a>
+          <a href="#" class="hover:text-blue-500">Courses</a>
+          <a href="#" class="hover:text-blue-500">Career Coach</a>
+          <a href="../search/livejobsearch.html" class="hover:text-blue-500">Job Hunt</a>
+        </nav>
+        <button class="md:hidden block" id="hamburger">
+          <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+    </header>
+  <div class="max-w-5xl mx-auto p-6">
+    <h1 class="text-2xl font-bold mb-4">SkillSync — Resume & Career Assistant</h1>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="bg-white p-5 rounded-lg shadow">
+        <h2 class="font-semibold mb-2">1. Job</h2>
+        <select id="jobSelect" class="w-full p-2 border rounded mb-2"></select>
+        <pre id="jobDetails" class="text-sm text-gray-600 whitespace-pre-wrap h-46 overflow-auto"></pre> 
+      </div>
+
+      <div class="bg-white p-5 rounded-lg shadow">
+        <h2 class="font-semibold mb-2">2. Resume Upload & Profile</h2>
+        <input id="resumeFile" type="file" accept=".pdf,.docx,.txt" class="w-full mb-3"/>
+        <div class="text-xs text-gray-500 mb-2">Upload PDF or DOCX. The system will parse and pre-fill your profile.</div>
+        <textarea id="jobDescription" placeholder="Paste job description here" class="border p-2 rounded w-full h-32"></textarea>
+        <div id="jobUrlContainer" class="mt-2"></div>
+        <button id="parseBtn" class="bg-blue-600 text-white px-3 py-2 rounded">Parse Resume</button>
+    </div>
+
+    <div class="bg-white p-5 rounded-lg shadow mt-6 col-span-2">
+      <h2 class="font-semibold mb-2">3. Editable Profile & Job Fit</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div>
+          <div class="text-sm font-medium mb-1">Profile Name</div>
+          <input id="profileName" class="w-full border rounded p-2" />
+        </div>
+
+        <div>
+          <div class="text-sm font-medium mb-1">Add Skill</div>
+          <div class="flex gap-2">
+            <input id="newSkillName" placeholder="Skill" class="w-full border rounded p-2"/>
+            <input id="newSkillLevel" type="number" min="0" max="100" value="60" class="w-20 border rounded p-2"/>
+            <button id="addSkillBtn" class="bg-green-600 text-white px-3 rounded">Add</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="text-sm font-medium mb-1">Actions</div>
+          <div class="flex gap-2">
+            <button id="genResumeBtn" class="bg-emerald-600 text-white px-3 py-2 rounded">Generate Resume</button>
+            <button id="genCoverBtn" class="bg-purple-600 text-white px-3 py-2 rounded">Generate Cover</button>
+            <button id="genQuestionsBtn" class="bg-yellow-600 text-black px-3 py-2 rounded">Interview Qs</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-4">
+        <div class="text-sm mb-1">Your Skills (edit level)</div>
+        <div id="skillsContainer" class="grid grid-cols-2 md:grid-cols-4 gap-2"></div>
+      </div>
+
+      <div class="mt-4">
+        <label class="block mb-1">Job Fit</label>
+        <div class="w-full bg-gray-200 rounded h-4">
+          <div id="fitBar" class="bg-green-500 h-4 rounded" style="width:0%"></div>
+        </div>
+        <div id="fitText" class="text-sm text-gray-600 mt-2"></div>
+      </div>
+
+      <div class="mt-4">
+        <div class="text-sm font-medium mb-1">Suggested Actions</div>
+        <ul id="suggestedActions" class="list-disc pl-5 text-sm text-gray-700"></ul>
+      </div>
+
+      <div class="mt-4">
+        <div id="output" class="bg-gray-50 border p-3 rounded text-sm whitespace-pre-wrap max-h-60 overflow-auto"></div>
+        <div id="spinner" class="hidden">
+            <svg class="animate-spin h-6 w-6 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+            </svg>
+            <span>Processing...</span>
+        </div>
+      </div>
+
+      <div class="mt-4 flex gap-2">
+        <a id="downloadLink" class="hidden text-blue-600 font-semibold"></a>
+        <button id="clearBtn" class="ml-auto text-sm text-gray-500">Clear Output</button>
+      </div>
+    </div>
+  </div>
+
+
+
+  <div class="max-w-xl mx-auto p-6 space-y-4">
+  <h1 class="text-2xl font-bold">Skillsync Resume Analyzer</h1>
+
+  <input type="file" id="resumeInput" accept=".pdf,.docx" class="border p-2 rounded w-full" />
+
+  <textarea id="jobDescription2" placeholder="Paste job description here"
+    class="border p-2 rounded w-full h-32"></textarea>
+
+  <button id="analyzeBtn" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+    Analyze Resume
+  </button>
+
+  <div id="status" class="text-gray-600"></div>
+  <pre id="output" class="bg-gray-100 p-4 rounded whitespace-pre-wrap"></pre>
+</div>
+
+<script type="module">
+import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf";
+import workerSrc from "pdfjs-dist/legacy/build/pdf.worker.min.js?url";
+
+// Tell PDF.js where to find the worker
+pdfjsLib.GlobalWorkerOptions.workerSrc = workerSrc;
+
+async function extractText(file) {
+  if (file.type === "application/pdf") {
+    const reader = new FileReader();
+    return new Promise((resolve, reject) => {
+      reader.onload = async function () {
+        try {
+          const pdf = await pdfjsLib.getDocument({ data: new Uint8Array(this.result) }).promise;
+          let text = "";
+          for (let i = 1; i <= pdf.numPages; i++) {
+            const page = await pdf.getPage(i);
+            const content = await page.getTextContent();
+            text += content.items.map((s) => s.str).join(" ") + "\n";
+          }
+          resolve(text);
+        } catch (err) {
+          reject(err);
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    });
+  } else if (file.name.endsWith(".docx")) {
+    const reader = new FileReader();
+    return new Promise((resolve, reject) => {
+      reader.onload = async function () {
+        try {
+          const result = await mammoth.extractRawText({ arrayBuffer: this.result });
+          resolve(result.value);
+        } catch (err) {
+          reject(err);
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    });
+  } else {
+    throw new Error("Unsupported file format");
+  }
+}
+
+document.getElementById("analyzeBtn").addEventListener("click", async () => {
+  const status = document.getElementById("status");
+  const output = document.getElementById("output");
+  status.textContent = "Processing...";
+  output.textContent = "";
+
+  try {
+    const file = document.getElementById("resumeInput").files[0];
+    if (!file) throw new Error("Please select a resume file.");
+
+    const jobDescription = document.getElementById("jobDescription2").value;
+    if (!jobDescription.trim()) throw new Error("Please enter a job description.");
+
+    const resumeText = await extractText(file);
+    if (!resumeText.trim()) throw new Error("Could not extract text from resume.");
+
+    console.log("Resume Text:", resumeText);
+    console.log("Job Description:", jobDescription);
+
+    const res = await fetch("/.netlify/functions/analyzeResume", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ resumeText, jobDescription }),
+    });
+
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+
+    status.textContent = "Analysis complete!";
+    output.textContent = data.analysis || JSON.stringify(data, null, 2);
+  } catch (err) {
+    status.textContent = "Error:";
+    output.textContent = err.message;
+  }
+});
+</script>
+
+
+  <script type="module" src="./llmAnalyzer.mjs"></script>
+</body>
+</html>

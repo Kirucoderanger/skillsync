@@ -260,6 +260,7 @@ function convertToJson(res) {
 }
 
 import fetchCourses from "../courseEngine/courseSuggest.mjs";
+
 document.querySelector('#job-search-btn').addEventListener('click', async () => {
   const jobTitle = document.querySelector('#job-title-input').value.trim();
   const categoryDropdownValue = document.getElementById('category-dropdown').value.trim();
@@ -375,7 +376,11 @@ function renderTrendingJobs(jobs) {
     <div class="bg-blue-50 p-3 rounded shadow hover:bg-blue-100 transition cursor-pointer job-card" 
          data-title="${job.title}" 
          data-category="${job.category?.label || 'General'}"
-         data-index="${index}">
+         data-index="${index}"
+         data-description="${job.description}"
+         data-company="${job.company?.display_name || 'Unknown Company'}"
+         data-id="${job.id}"
+         data-redirect_url="${job.redirect_url}">
       <h3 class="text-md font-semibold">${job.title}</h3>
       <p class="text-sm text-gray-600">${job.company?.display_name || 'Unknown Company'} — ${job.location?.display_name || 'Unknown Location'}</p>
       <p><strong>Category:</strong> ${job.category?.label || "N/A"}</p>
@@ -383,6 +388,8 @@ function renderTrendingJobs(jobs) {
       <p><strong>Contract:</strong> ${job.contract_type || "permanent/temporary"} (${job.contract_time || "full_time/part_time"})</p>
       <p><strong>created:</strong> ${job.created}</p>
       <p><strong>${adjacentName}</strong> <a href="${job.redirect_url}" target="_blank" class="text-blue-500 text-sm underline">View Job</a></p>
+      <p class="text-sm text-gray-500">Job Description: ${job.description}</p>
+      <p class="text-sm text-gray-500">Job id: ${job.id}</p>
     </div>
   `).join('');
 
@@ -393,7 +400,32 @@ function renderTrendingJobs(jobs) {
       const roleTitle = card.dataset.title;
       console.log(roleTitle);
       const category = card.dataset.category;
+      const jobTitle = card.dataset.title;
+      const jobDescription = card.dataset.description;
+      const companyName = card.dataset.company;
+      const jobUrl = card.dataset.redirect_url;
+      const jobId = card.dataset.id;
       const skillTracker = document.getElementById("skill-tracker");
+
+
+       //load job to local storage
+        //const category = btn.dataset.category;
+        const jobCategoryKey = `jobs:${category}`;
+        const existingJob = JSON.parse(localStorage.getItem(jobCategoryKey)) || [];
+        //let tracked = JSON.parse(localStorage.getItem(`${category}-trackedSkills`) || "[]");
+        
+            if (!existingJob.some(j => j.id === jobId)) {
+              existingJob.push({
+                id: jobId,
+                category: category,
+                title: jobTitle,
+                description: jobDescription,
+                company: companyName,
+                url: jobUrl
+              });
+              localStorage.setItem(jobCategoryKey, JSON.stringify(existingJob));
+
+            }
 
       // Clear previous skills
       skillTracker.innerHTML = `<p class="text-gray-400 text-sm italic">Loading skills for "${roleTitle}"...</p>`;
@@ -413,6 +445,8 @@ function renderTrendingJobs(jobs) {
             ${skill}
           </button>
         `).join('');
+
+       
 
         // Attach click to each skill button
         document.querySelectorAll(".skill-button").forEach(btn => {

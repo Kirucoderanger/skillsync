@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SkillSync – Resume Feedback</title>
+  <script type="module" src="resumeAnalyzer.mjs" defer></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-6">
+  <div class="bg-white shadow-lg rounded-2xl p-6 w-full max-w-3xl">
+    <h1 class="text-2xl font-bold mb-4 text-center">SkillSync – Resume Feedback & Generator</h1>
+
+    <!-- Job Selection -->
+    <label class="block mb-2 font-semibold">Select a Job:</label>
+    <select id="jobSelect" class="w-full border rounded-lg p-2 mb-4">
+      <!-- Populated dynamically -->
+    </select>
+
+    <!-- Resume Upload -->
+    <label class="block mb-2 font-semibold">Upload Resume (PDF/DOCX):</label>
+    <input id="resumeUpload" type="file" accept=".pdf,.docx"
+      class="w-full border p-2 rounded mb-4" />
+
+    <button id="analyzeBtn"
+      class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2 rounded-lg">
+      Analyze Resume
+    </button>
+
+    <!-- Results -->
+    <div id="results" class="mt-6 hidden">
+      <h2 class="text-xl font-bold mb-2">Analysis Results</h2>
+      <p id="fitScore" class="font-semibold text-green-600"></p>
+      <div id="missingSkills" class="mt-2"></div>
+      <div id="improvementTips" class="mt-2 text-gray-700"></div>
+    </div>
+  </div>
+
+
+  
+  <div class="p-6 max-w-3xl mx-auto">
+  <h2 class="text-xl font-bold mb-4">Resume Assistant</h2>
+
+  <!-- Upload -->
+  <input type="file" id="resumeUpload" class="mb-4" />
+
+  <!-- Job Selection -->
+  <select id="jobSelect" class="border rounded p-2 w-full mb-4">
+    <option>Select a Job</option>
+    <!-- populate dynamically with Adzuna results -->
+  </select>
+
+  <!-- Analysis Result -->
+  <div id="analysisResult" class="p-4 bg-gray-100 rounded hidden">
+    <h3 class="font-semibold">Fit Analysis</h3>
+    <p id="fitScore"></p>
+    <p id="matchedSkills"></p>
+    <p id="missingSkills"></p>
+  </div>
+
+  <!-- Download -->
+  <button id="downloadResume" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded">
+    Download Tailored Resume
+  </button>
+</div>
+
+</body>
+</html>
