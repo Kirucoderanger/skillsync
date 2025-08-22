@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Adzuna Job Search with Pagination</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-6">
+<div class="max-w-3xl mx-auto">
+  <h1 class="text-2xl font-bold mb-4">Job Search</h1>
+
+  <!-- Search bar -->
+  <div class="flex mb-4 space-x-2">
+    <input type="text" id="searchInput" placeholder="Enter job title" class="flex-1 p-2 border rounded"/>
+    <button id="searchBtn" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Search</button>
+  </div>
+
+  <!-- Jobs container -->
+  <div id="jobsContainer" class="space-y-4"></div>
+
+  <!-- Loading indicator -->
+  <div id="loading" class="text-center my-4 text-gray-500 hidden">Loading...</div>
+
+  <!-- Page info -->
+  <div id="pageInfo" class="text-center text-gray-600 my-2"></div>
+
+  <!-- End of list notification -->
+  <div id="endOfList" class="text-center text-gray-500 my-2 hidden">No more jobs available.</div>
+
+  <!-- Pagination controls -->
+  <div class="flex justify-center items-center space-x-2 mb-4">
+    <button id="prevBtn" class="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400">Prev</button>
+    <div id="pageNumbers" class="flex space-x-1"></div>
+    <button id="nextBtn" class="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400">Next</button>
+  </div>
+
+  <!-- Load more button -->
+  <div class="text-center mb-4">
+    <button id="loadMoreBtn" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 hidden">Load More</button>
+  </div>
+
+  <!-- Back to top -->
+  <button id="backToTop" class="fixed bottom-6 right-6 px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600 hidden">Back to Top</button>
+</div>
+
+<script>
+     const jobTitle = document.getElementById('searchInput').value;
+    document.getElementById('searchBtn').addEventListener('click', async () => {
+      //const jobTitle = document.getElementById('searchInput').value;
+      const categoryDropdownValue = document.getElementById('categoryDropdown').value;
+      const dateCreated = document.getElementById('dateDropdown').value;
+      const countryDropdownValue = document.getElementById('countryDropdown').value;
+      const onlyRemote = document.getElementById('remoteCheckbox').checked;
+
+      let handler = `/.netlify/functions/job-search?title=${encodeURIComponent(jobTitle)}&category=${encodeURIComponent(categoryDropdownValue)}&date=${encodeURIComponent(dateCreated)}&country=${encodeURIComponent(countryDropdownValue)}&remote=${encodeURIComponent(onlyRemote)}`;
+
+      const res = await fetch(url);
+    });
+const APP_ID = 'YOUR_APP_ID';
+const APP_KEY = 'YOUR_APP_KEY';
+const RESULTS_PER_PAGE = 10;
+const COUNTRY = 'gb';
+
+let currentPage = 0;
+let totalPages = Infinity;
+let pageCache = {};
+let fetching = false;
+let prefetching = false;
+let currentQuery = '';
+let noMoreResults = false;
+let scrollTimeout;
+
+// Initialize cache
+const savedCache = localStorage.getItem('adzunaPageCache');
+if (savedCache) pageCache = JSON.parse(savedCache);
+
+// Fetch page from API with retry
+async function fetchPage(page, query, retries = 2) {
+  const key = `${query}|${page}`;
+  if (pageCache[key]) return pageCache[key];
+
+  fetching = true;
+  document.getElementById('loading').classList.remove('hidden');
+
+  try {
+    //const url = `https://api.adzuna.com/v1/api/jobs/${COUNTRY}/search/${page}?app_id=${APP_ID}&app_key=${APP_KEY}&results_per_page=${RESULTS_PER_PAGE}&what=${encodeURIComponent(query)}&sort_by=date&order=down`;
+    const url = `/.netlify/functions/job-search?title=${encodeURIComponent(jobTitle)}&category=${encodeURIComponent(categoryDropdownValue)}&date=${encodeURIComponent(dateCreated)}&country=${encodeURIComponent(countryDropdownValue)}&remote=${encodeURIComponent(onlyRemote)}`;
+
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`Failed to fetch page ${page}`);
+    const data = await res.json();
+
+    if (totalPages === Infinity) {
+      totalPages = Math.ceil(data.count / RESULTS_PER_PAGE);
+    }
+
+    // Stop if results are empty or less than expected
+    if (!data.results || data.results.length === 0 || data.results.length < RESULTS_PER_PAGE) {
+      noMoreResults = true;
+      document.getElementById('endOfList').classList.remove('hidden');
+      document.getElementById('loadMoreBtn').classList.add('hidden');
+    }
+
+    pageCache[key] = data.results;
+    localStorage.setItem('adzunaPageCache', JSON.stringify(pageCache));
+    return data.results;
+  } catch (err) {
+    if (retries > 0) return fetchPage(page, query, retries - 1);
+    console.error(err);
+    alert(`Error fetching page ${page}`);
+    return [];
+  } finally {
+    fetching = false;
+    document.getElementById('loading').classList.add('hidden');
+  }
+}
+
+// Prefetch next page
+async function prefetchPage(page, query) {
+  if (page > totalPages || pageCache[`${query}|${page}`] || prefetching || noMoreResults) return;
+  prefetching = true;
+  await fetchPage(page, query);
+  prefetching = false;
+}
+
+// Render jobs
+function renderJobs(jobs, reset=false) {
+  const container = document.getElementById('jobsContainer');
+  if (reset) container.innerHTML = '';
+  jobs.forEach(job => {
+    const div = document.createElement('div');
+    div.className = 'p-4 bg-white rounded shadow';
+    div.innerHTML = `
+      <h2 class="text-lg font-semibold">${job.title}</h2>
+      <p class="text-gray-600">${job.company.display_name}</p>
+      <p class="text-gray-500 text-sm">${new Date(job.created).toLocaleDateString()}</p>
+      <a href="${job.redirect_url}" target="_blank" class="text-blue-500 underline mt-1 inline-block">View Job</a>
+    `;
+    container.appendChild(div);
+  });
+}
+
+// Update page info
+function updatePageInfo() {
+  document.getElementById('pageInfo').textContent = `Page ${currentPage}${totalPages === Infinity ? '' : ' / ' + totalPages}`;
+  renderPaginationButtons();
+}
+
+// Render page numbers for jumping
+function renderPaginationButtons() {
+  const container = document.getElementById('pageNumbers');
+  container.innerHTML = '';
+  for (let i=1; i<=Math.min(totalPages, 10); i++) { // limit to 10 buttons for UI
+    const btn = document.createElement('button');
+    btn.textContent = i;
+    btn.className = `px-3 py-1 rounded ${i===currentPage ? 'bg-blue-500 text-white' : 'bg-gray-300 hover:bg-gray-400'}`;
+    btn.addEventListener('click', async () => {
+      currentPage = i;
+      const jobs = await fetchPage(currentPage, currentQuery);
+      renderJobs(jobs, true);
+      updatePageInfo();
+      document.getElementById('endOfList').classList.add('hidden');
+      noMoreResults = false;
+      toggleLoadMoreButton();
+    });
+    container.appendChild(btn);
+  }
+}
+
+// Toggle Load More button visibility
+function toggleLoadMoreButton() {
+  if (!noMoreResults && currentPage < totalPages) {
+    document.getElementById('loadMoreBtn').classList.remove('hidden');
+  } else {
+    document.getElementById('loadMoreBtn').classList.add('hidden');
+  }
+}
+
+// Scroll handler with debounce
+function handleScrollDebounced() {
+  clearTimeout(scrollTimeout);
+  scrollTimeout = setTimeout(handleScroll, 100);
+}
+
+// Handle scroll for infinite scroll & prefetch
+async function handleScroll() {
+  if (noMoreResults || fetching) return;
+
+  const container = document.getElementById('jobsContainer');
+  const scrollPosition = window.innerHeight + window.scrollY;
+  const threshold = container.offsetHeight * 0.7;
+
+  // Prefetch next page at 50%
+  if (scrollPosition >= container.offsetHeight * 0.5 && currentPage < totalPages) {
+    prefetchPage(currentPage + 1, currentQuery);
+  }
+
+  // Load next page at 70%
+  if (scrollPosition >= threshold && currentPage < totalPages) {
+    currentPage++;
+    const jobs = await fetchPage(currentPage, currentQuery);
+    if (jobs && jobs.length > 0) renderJobs(jobs);
+    updatePageInfo();
+    toggleLoadMoreButton();
+  }
+
+  // Back to top visibility
+  document.getElementById('backToTop').classList.toggle('hidden', window.scrollY < 300);
+}
+
+// Search button click
+document.getElementById('searchBtn').addEventListener('click', async () => {
+  const query = document.getElementById('searchInput').value.trim();
+  if (!query) return alert('Enter a job title');
+
+  currentQuery = query;
+  currentPage = 1;
+  totalPages = Infinity;
+  noMoreResults = false;
+  renderJobs([], true);
+  document.getElementById('endOfList').classList.add('hidden');
+
+  const jobs = await fetchPage(currentPage, query);
+  renderJobs(jobs);
+  updatePageInfo();
+  toggleLoadMoreButton();
+});
+
+// Load More button click
+document.getElementById('loadMoreBtn').addEventListener('click', async () => {
+  if (currentPage < totalPages && !fetching) {
+    currentPage++;
+    const jobs = await fetchPage(currentPage, currentQuery);
+    if (jobs && jobs.length > 0) renderJobs(jobs);
+    updatePageInfo();
+    toggleLoadMoreButton();
+  }
+});
+
+// Prev / Next buttons
+document.getElementById('prevBtn').addEventListener('click', async () => {
+  if (currentPage > 1) {
+    currentPage--;
+    const jobs = await fetchPage(currentPage, currentQuery);
+    renderJobs(jobs, true);
+    updatePageInfo();
+    noMoreResults = false;
+    document.getElementById('endOfList').classList.add('hidden');
+    toggleLoadMoreButton();
+  }
+});
+
+document.getElementById('nextBtn').addEventListener('click', async () => {
+  if (currentPage < totalPages) {
+    currentPage++;
+    const jobs = await fetchPage(currentPage, currentQuery);
+    renderJobs(jobs, true);
+    updatePageInfo();
+    document.getElementById('endOfList').classList.add('hidden');
+    toggleLoadMoreButton();
+  }
+});
+
+// Back to top
+document.getElementById('backToTop').addEventListener('click', () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+// Scroll listener
+window.addEventListener('scroll', handleScrollDebounced);
+</script>
+</body>
+</html>

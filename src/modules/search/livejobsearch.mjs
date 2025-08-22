@@ -171,6 +171,14 @@ let courseCache = JSON.parse(localStorage.getItem('courseSuggestions') || '{}');
 });*/
 
 const remoteToggle = document.getElementById('remote-toggle');
+remoteToggle.addEventListener("change", () => {
+  const isRemoteOnly = remoteToggle.checked; 
+  console.log("Remote only:", isRemoteOnly);
+
+  // Apply it to your search request
+  // Example: add a query param or modify your API call
+  //performSearch({ remote: isRemoteOnly });
+});
 
 /*searchBtn.addEventListener('click', async () => {
   const title = jobInput.value.trim();
@@ -262,14 +270,18 @@ function convertToJson(res) {
 import fetchCourses from "../courseEngine/courseSuggest.mjs";
 
 document.querySelector('#job-search-btn').addEventListener('click', async () => {
+  let onlyRemote = "";
   const jobTitle = document.querySelector('#job-title-input').value.trim();
   const categoryDropdownValue = document.getElementById('category-dropdown').value.trim();
   const countryDropdownValue = document.getElementById('country-dropdown').value.trim();
   const dateCreated = document.getElementById('date-created').value.trim();
   const remoteOnly = document.querySelector('#remote-toggle').checked;
+  if (remoteOnly) {
+    onlyRemote = "work-from-home";
+  }
 
   try {
-    let handler = `/.netlify/functions/job-search?title=${encodeURIComponent(jobTitle)}&category=${encodeURIComponent(categoryDropdownValue)}&date=${encodeURIComponent(dateCreated)}&country=${encodeURIComponent(countryDropdownValue)}`;
+    let handler = `/.netlify/functions/job-search?title=${encodeURIComponent(jobTitle)}&category=${encodeURIComponent(categoryDropdownValue)}&date=${encodeURIComponent(dateCreated)}&country=${encodeURIComponent(countryDropdownValue)}&remote=${encodeURIComponent(onlyRemote)}`;
     const data = await fetch(handler);
     
     if (!data.ok) throw new Error('Failed to fetch jobs');
