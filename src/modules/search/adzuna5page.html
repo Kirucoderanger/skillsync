@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Adzuna Infinite Scroll Search</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-6">
+<div class="max-w-3xl mx-auto">
+  <h1 class="text-2xl font-bold mb-4">Job Search</h1>
+
+  <!-- Search bar -->
+  <div class="flex mb-4 space-x-2">
+    <input type="text" id="searchInput" placeholder="Enter job title" class="flex-1 p-2 border rounded"/>
+    <button id="searchBtn" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Search</button>
+  </div>
+
+  <!-- Jobs container -->
+  <div id="jobsContainer" class="space-y-4"></div>
+
+  <!-- Loading indicator -->
+  <div id="loading" class="text-center my-4 text-gray-500 hidden">Loading...</div>
+
+  <!-- Page info -->
+  <div id="pageInfo" class="text-center text-gray-600 my-2"></div>
+
+  <!-- Back to top -->
+  <button id="backToTop" class="fixed bottom-6 right-6 px-4 py-2 bg-blue-500 text-white rounded shadow hover:bg-blue-600 hidden">Back to Top</button>
+</div>
+
+<script>
+const APP_ID = 'YOUR_APP_ID';
+const APP_KEY = 'YOUR_APP_KEY';
+const RESULTS_PER_PAGE = 10;
+const COUNTRY = 'gb';
+
+let currentPage = 0;
+let totalPages = Infinity; // dynamic
+let pageCache = {};
+let fetching = false;
+let prefetching = false;
+let currentQuery = '';
+
+// Initialize cache
+const savedCache = localStorage.getItem('adzunaPageCache');
+if (savedCache) pageCache = JSON.parse(savedCache);
+
+// Fetch a page from API with retry
+async function fetchPage(page, query, retries = 2) {
+  const key = `${query}|${page}`;
+  if (pageCache[key]) return pageCache[key];
+
+  fetching = true;
+  document.getElementById('loading').classList.remove('hidden');
+
+  try {
+const countryDropdownValue = "us";
+    const categoryDropdownValue = "";
+    const dateCreated = "";
+    const onlyRemote = false;
+    const jobTitle = document.getElementById('searchInput').value;
+    //const url = `https://api.adzuna.com/v1/api/jobs/${COUNTRY}/search/${page}?app_id=${APP_ID}&app_key=${APP_KEY}&results_per_page=${RESULTS_PER_PAGE}&what=${encodeURIComponent(query)}&sort_by=date&order=down`;
+    const url = `/.netlify/functions/job-search?title=${encodeURIComponent(jobTitle)}&category=${encodeURIComponent(categoryDropdownValue)}&date=${encodeURIComponent(dateCreated)}&country=${encodeURIComponent(countryDropdownValue)}&remote=${encodeURIComponent(onlyRemote)}`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`Failed to fetch page ${page}`);
+    const data = await res.json();
+
+    // Calculate total pages dynamically
+    if (totalPages === Infinity) {
+      totalPages = Math.ceil(data.count / RESULTS_PER_PAGE);
+    }
+
+    pageCache[key] = data.results;
+    localStorage.setItem('adzunaPageCache', JSON.stringify(pageCache));
+    return data.results;
+  } catch (err) {
+    if (retries > 0) return fetchPage(page, query, retries - 1);
+    console.error(err);
+    alert(`Error fetching page ${page}`);
+    return [];
+  } finally {
+    fetching = false;
+    document.getElementById('loading').classList.add('hidden');
+  }
+}
+
+// Prefetch next page in background
+async function prefetchPage(page, query) {
+  if (page > totalPages || pageCache[`${query}|${page}`] || prefetching) return;
+  prefetching = true;
+  await fetchPage(page, query);
+  prefetching = false;
+}
+
+// Render jobs
+function renderJobs(jobs) {
+  const container = document.getElementById('jobsContainer');
+  jobs.forEach(job => {
+    const div = document.createElement('div');
+    div.className = 'p-4 bg-white rounded shadow';
+    div.innerHTML = `
+      <h2 class="text-lg font-semibold">${job.title}</h2>
+      <p class="text-gray-600">${job.company.display_name}</p>
+      <p class="text-gray-500 text-sm">${new Date(job.created).toLocaleDateString()}</p>
+      <a href="${job.redirect_url}" target="_blank" class="text-blue-500 underline mt-1 inline-block">View Job</a>
+    `;
+    container.appendChild(div);
+  });
+}
+
+// Update page info
+function updatePageInfo() {
+  document.getElementById('pageInfo').textContent = `Page ${currentPage} / ${totalPages === Infinity ? '?' : totalPages}`;
+}
+
+// Back to top button
+document.getElementById('backToTop').addEventListener('click', () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+// Scroll handler
+async function handleScroll() {
+  const container = document.getElementById('jobsContainer');
+  const scrollPosition = window.innerHeight + window.scrollY;
+  const threshold = container.offsetHeight * 0.7;
+
+  // Prefetch next page at 50%
+  if (scrollPosition >= container.offsetHeight * 0.5 && currentPage < totalPages) {
+    prefetchPage(currentPage + 1, currentQuery);
+  }
+
+  // Load next page at 70%
+  if (scrollPosition >= threshold && !fetching && currentPage < totalPages) {
+    currentPage++;
+    const jobs = await fetchPage(currentPage, currentQuery);
+    renderJobs(jobs);
+    updatePageInfo();
+  }
+
+  // Toggle back to top
+  document.getElementById('backToTop').classList.toggle('hidden', window.scrollY < 300);
+}
+
+// Search button
+document.getElementById('searchBtn').addEventListener('click', async () => {
+  const query = document.getElementById('searchInput').value.trim();
+  if (!query) return alert('Enter a job title to search');
+
+  // Reset state
+  currentQuery = query;
+  currentPage = 1;
+  totalPages = Infinity;
+  document.getElementById('jobsContainer').innerHTML = '';
+  updatePageInfo();
+
+  const jobs = await fetchPage(currentPage, query);
+  renderJobs(jobs);
+  updatePageInfo();
+});
+
+// Initial scroll listener
+window.addEventListener('scroll', handleScroll);
+</script>
+</body>
+</html>

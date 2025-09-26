@@ -38,7 +38,7 @@ const cohere = new CohereClient({ token: process.env.VITE_COHERE_KEY });
 export async function callLLM(prompt, system = "You are a helpful assistant.") {
   try {
     const resp = await cohere.chat({
-      model: "command-r-plus",   // good for reasoning + JSON extraction
+      model: "command-r-plus-08-2024",   // good for reasoning + JSON extraction
       message: prompt,
       preamble: system,
       temperature: 0.2,

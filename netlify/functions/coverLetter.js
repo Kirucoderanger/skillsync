@@ -10,7 +10,7 @@ export const handler = async (event) => {
     const cohere = new CohereClient({ token: process.env.VITE_COHERE_KEY });
 
     const response = await cohere.chat({
-      model: "command-r-plus",
+      model: "command-r-plus-08-2024",
       message: `
 You are an expert career coach.
 Write a concise, engaging cover letter based on the resume and job description.

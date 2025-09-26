@@ -11,7 +11,7 @@ export const handler = async (event) => {
     const cohere = new CohereClient({ token: process.env.VITE_COHERE_KEY });
 
     const response = await cohere.chat({
-      model: "command-r-plus",
+      model: "command-r-plus-08-2024",
       message: `
       You are an expert career coach AI.
       Analyze the resume against the job description.
